@@ -1,0 +1,55 @@
+*{margin:0;padding:0}
+html, body {height:100%;width:100%;position: relative;}
+
+h1#gen_title {
+	font-weight: bold;
+}
+
+#header {
+   height:100px;
+   width:100%;
+   background-color:#FF0000;
+} 
+#input_url {
+	display: table;
+	margin: 0 auto;
+}
+#action_panel {
+	overflow:hidden;
+	height: 100%;
+	width: 90%;
+    background: red;
+    margin: auto;
+    padding: 10px;
+}
+#left_panel {
+	width: 75%;
+    height: 768px;
+    background: yellow;
+    float: left;
+	overflow-y:scroll;
+}
+#right_panel {
+	margin-left: 25%;
+    height: 768px;
+    background: green;
+	
+}
+#frame_box
+{
+    height:98%;
+    width: 100%;
+}
+
+.highlighted-yellow{
+	background-color: yellow;
+}
+.highlighted-blue:hover{
+	background-color: blue;
+}
+.highlighted-green{
+	background-color: green;
+}
+.modified{
+	background-color: purple;
+}

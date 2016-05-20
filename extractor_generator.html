@@ -1,0 +1,87 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+<script src="jquery-1.11.3.min.js"></script>
+<script src="jquery-getpath.js"></script>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="style.css">
+
+<script type="text/javascript" src="script.js"></script>
+
+<title>TY - Data-Extractor Generator</title>
+</head>
+
+<body>
+<h1 id="gen_title">Data-Extractor Generator</h1>
+<br />
+<div id='main_panel'>
+	<div id="input_url">	
+        <form>
+        Page URL: <input type="text" name="page_url", size="80%", id="page_url", value="http://www.neredekal.com/assortie-la-villa-otel/"><br>
+        <div id="submit_button" style="display: table; margin: 0 auto">
+        <button type="button" id="load_page">Load Page</button>
+        </div>
+        </form>
+    </div>
+<br />
+	<div id="action_panel">
+    	<div id="left_panel"> 
+	    	<p>Page preview</p> 
+            <div id="content" class="not-modified">
+            </div>
+    	</div>
+        
+        <div id="right_panel"> 
+            Right panel   
+            <li>
+                <form>
+                    <h4>Hotel Name</h3>
+                    <input type="text" name="name", id="ToSelect", value="Hotel Name", class="hotel_item">
+                </form>
+            </li>
+            <li>
+                <form>
+                    <h4>Hotel Address</h3>
+                    <input type="text" name="address", id="ToSelect", value="Hotel Address", class="hotel_item">
+                </form>
+            </li>
+            <li>
+                <form>
+                    <h4>Hotel Score</h3>
+                    <input type="text" name="score", id="ToSelect", value="Hotel Score", class="hotel_item">
+                </form>
+            </li>
+            <li>
+                <form>
+                    <h4>Hotel Id</h3>
+                    <input type="text" name="external_source_id", id="ToSelect", value="External Id", class="hotel_item">
+                </form>
+            </li> 
+            <li>
+                <form>
+                    <h4>Review Text</h3>
+                    <input type="text" name="text", id="ToSelect", value="Review Text", class="review_item">
+                </form>
+            </li>
+            <li>
+                <form>
+                    <h4>Review Author</h3>
+                    <input type="text" name="author", id="ToSelect", value="Review Author", class="review_item">
+                </form>
+            </li>
+            <li>
+                <form>
+                    <h4>Review Score</h3>
+                    <input type="text" name="score", id="ToSelect", value="Review Score", class="review_item">
+                </form>
+            </li>          
+        </div>
+        <div id="generate_scripts_button" style="display: table; margin: 0 auto">
+        <button type="button" id="generate_scripts">Generate scripts</button>
+        </div>
+	</div>
+</div>
+</body>
+
+</html>

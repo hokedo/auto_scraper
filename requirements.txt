@@ -1,0 +1,6 @@
+cssselect==0.9.1
+lxml==3.5.0
+pyquery==1.2.11
+requests==2.10.0
+web.py==0.37
+wheel==0.24.0

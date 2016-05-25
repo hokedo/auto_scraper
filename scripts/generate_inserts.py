@@ -4,7 +4,7 @@
 import sys
 import argparse
 
-sql_insert = "INSERT INTO tokens.all_tokens (token, type) SELECT '{0}', {1} WHERE NOT EXISTS (SELECT 1 from tokens.all_tokens WHERE token = '{0}'');"
+sql_insert = "INSERT INTO tokens.all_tokens (token, type) SELECT '{0}', {1} WHERE NOT EXISTS (SELECT 1 from tokens.all_tokens WHERE token = '{0}');"
 
 def parse_arguments():
 	parser = argparse.ArgumentParser()

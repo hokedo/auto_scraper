@@ -6,14 +6,14 @@ import traceback
 from scripts.utils import get_parameters
 from scripts.utils import create_files
 from scripts.utils import requestPage
-urls = ('/', 'crawler_generator')
+urls = ('/', 'server')
 #render = web.template.render('templates/')
 
 app = web.application(urls, globals())
 
 #my_form = web.form.Form(web.form.Textbox('', class_='textfield', id='textfield'),)
 
-class crawler_generator:
+class server:
 	def GET(self):
 		callback_name = web.input(callback='callback').callback
 		web.header('Content-Type', 'application/javascript')

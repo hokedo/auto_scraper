@@ -1,3 +1,6 @@
+#-*- coding:utf-8 -*-
+
+
 import sys
 import re
 import pprint as pp
@@ -103,3 +106,47 @@ for line in sys.stdin:
 	f = open("test.py", "w")
 	f.write(headers + "\n" + imports + "\n" + main_page + "\n" + review_page + "\n" + review_frame + "\n\n" + footers + "\n")
 	f.close()
+
+def stripper(string, strippers):
+	flag = True
+	while flag:
+		flag = False
+		if len(string) > 0 and string[0] in strippers:
+			string = string.strip(string[0])
+			flag = True
+		if len(string) > 0 and string[-1] in strippers:
+			string = string.strip(string[-1])
+			flag = True
+	return string
+
+def filter_range(string, char_range):
+	for character in string:
+		if ord(character) < char_range[0] or ord(character) > char_range[-1]:
+			return False
+	return True
+
+def splitter(string):
+	if "　" in string:
+		return string.split("　")
+	else:
+		return string.split()
+
+def mapper_process(line, args):
+	line = line.strip().split("\t")
+	if len(line) >= hdfs_mapping[args.type] and line[hdfs_mapping[args.type]] is not None and line[hdfs_mapping[args.type]] != '':
+		title = line[hdfs_mapping[args.type]]
+		for token in splitter(title):
+			_token = stripper(token, strippers)
+			if filter_range(_token, char_range):
+				print _token
+
+insert_mapping = { 
+	"review_text" : 2,
+	"hotel_title" : 1
+}
+hdfs_mapping = { #HDFS tsv files
+	"review_text" : 10, #from hotel4x.reivew
+	"hotel_title" : 9 #from hotel4x.source
+	}
+strippers = [" ", ";", ".", ",", "`", "'", "/", "\\", ")", "(", "-", "[", "]", "/", "&"]
+char_range = [0, 127]

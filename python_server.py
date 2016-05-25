@@ -3,9 +3,9 @@ import web
 import sys
 import json
 import traceback
-from utils import get_parameters
-from utils import create_files
-from utils import requestPage
+from scripts.utils import get_parameters
+from scripts.utils import create_files
+from scripts.utils import requestPage
 urls = ('/', 'crawler_generator')
 #render = web.template.render('templates/')
 

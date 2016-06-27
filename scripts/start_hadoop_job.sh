@@ -14,6 +14,8 @@ cat << EOF
     -p    The part of this script to run.
     	  First part: Grep and sort them uniquely
 
+  Accepted token types: hotel_title, review_text
+
   Examples:
 
     $ $0 -t hotel_title -p all
@@ -23,20 +25,21 @@ EOF
 
 mappings()
 {	
-	LAST_RUN=`hadoop fs -ls /user/daily-user/daily | tail -3 | head -1 | cut -f5 -d"/"`
+	
 	INPUT=""
 	token_type=$1;
 	if [ "$token_type" == "hotel_title" ]; then
-        INPUT="/user/daily-user/daily/$LAST_RUN/prep/source.tsv";
+        INPUT="";
 
 	elif [ "$token_type" == "review_text" ]; then
-        INPUT="/user/daily-user/daily/$LAST_RUN/prep/review.tsv/review_*";
+        INPUT="";
     else
     	echo -e "\n Invalid token type \n"
+        usage >&2
     	exit 1
     fi
-echo "Last Daily Run: $LAST_RUN"
-echo "Input path: $INPUT"
+
+echo "input: $INPUT"
 
 }
 
@@ -67,6 +70,7 @@ VERBOSE=""
 
         if [ -z "$TYPE" ]; then
                 echo -e "\n Token type not specified \n" >&2
+                usage >&2
                 exit 1
         fi
 
@@ -82,33 +86,9 @@ VERBOSE=""
                 PART="second";
         fi
 
-        echo "Token Type: $TYPE"
-        echo "Script Part: $PART"
+        echo "type: $TYPE"
+        echo "part: $PART"
 }
 
 set_params $@
 mappings $TYPE
-
-if [ "$PART" == "all" ] || [ "$PART" == "first" ] ; then
-    hadoop jar /usr/local/hadoop/contrib/streaming/hadoop-*-streaming.jar\
-        -Dstream.non.zero.exit.is.failure=false\
-        -Dmapred.map.tasks.speculative.execution=false\
-        -Dmapred.reduce.tasks=500\
-        -file "mapper.py"\
-        -file "utils.py"\
-        -input "$INPUT"\
-        -output "crawl-gen/$TYPE""_temp"\
-        -mapper "mapper.py $TYPE"\
-        -reducer "sort -u"
-    fi
-if [ "$PART" == "all" ] || [ "$PART" == "second" ] ; then
-    hadoop jar /usr/local/hadoop/contrib/streaming/hadoop-*-streaming.jar\
-        -Dstream.non.zero.exit.is.failure=false\
-        -Dmapred.map.tasks.speculative.execution=false\
-        -Dmapred.reduce.tasks=0\
-        -file "generate_inserts.py"\
-        -file "utils.py"\
-        -input "crawl-gen/$TYPE""_temp"\
-        -output "crawl-gen/$TYPE"\
-        -mapper "generate_inserts.py $TYPE"
-    fi

@@ -148,5 +148,5 @@ hdfs_mapping = { #HDFS tsv files
 	"review_text" : 10, #from hotel4x.reivew
 	"hotel_title" : 9 #from hotel4x.source
 	}
-strippers = [" ", ";", ".", ",", "`", "'", "/", "\\", ")", "(", "-", "[", "]", "/", "&"]
+strippers = [" ", ";", ".", ",", "`", "'", "/", "\\", ")", "(", "-", "[", "]", "/", "&", "*"]
 char_range = [0, 127]

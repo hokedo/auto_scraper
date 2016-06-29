@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 #-*- coding:utf-8 -*-
 
 
@@ -150,3 +151,7 @@ hdfs_mapping = { #HDFS tsv files
 	}
 strippers = [" ", ";", ".", ",", "`", "'", "/", "\\", ")", "(", "-", "[", "]", "/", "&", "*"]
 char_range = [0, 127]
+
+
+def dedup_dict_list(l):
+	return [dict(t) for t in set([tuple(d.items()) for d in l])]

@@ -1,54 +1,19 @@
 #!/usr/bin/env python
 
+import sys
+import json
+from scripts.utils import dedup_dict_list
 from pyquery import PyQuery as pq
-import re
+from scripts.classifier import DataClassifier
 
-def dedup_dict_list(l):
-	return [dict(t) for t in set([tuple(d.items()) for d in l])]
-
-def current_elementname(pqobject):
-	if pqobject:
-		name = re.search(r"<([a-z]+)\s", str(pqobject))
-		if name:
-			obj_name = name.group(1)
-			obj_id = pqobject.attr("id")
-			if obj_id:
-				obj_name += "#" + obj_id
-			obj_classes = pqobject.attr("class")
-			if obj_classes:
-				obj_name += "."
-				obj_name += ".".join([obj_class for obj_class in obj_classes.split(" ")]) 
-			
-			return obj_name
-		else:
-			print "No name matched"
-			return None
-	else:
-		print "PyQuery object is empty"
-		return None
-
-def recursive_classify(pqobject, output=[]):
-	pqobject = pq(pqobject)
-	output = list(output)
-
-	_pqobject = pqobject.clone()
-	_pqobject.children().remove()
-	result = _pqobject.text()
-	if len(output) > 0:
-		output.append({output[-1].keys()[0] + " " + current_elementname(_pqobject): result})
-	else:
-		output.append({current_elementname(_pqobject): result})
-
-	_output = list(output)
-	for child in pqobject.children():
-		output += recursive_classify(child, _output)
-	
-	return output
-
-
+classifier = DataClassifier()
+classifier.connect("dev-ro", "password", "ty_temp", "127.0.0.1", "5433")
 f = open("gen_test.html", "r")
-h = pq(f.read())
+#h = pq(f.read())
+h = pq("http://stackoverflow.com/questions/2600191/how-can-i-count-the-occurrences-of-a-list-item-in-python")
 f.close()
-a = h("p.name:eq(0)")
-b = recursive_classify(a)
-print dedup_dict_list(b)
+#a = h("p.name:eq(0)")
+a = h("body")
+#b = recursive_classify(a)
+#print dedup_dict_list(b)
+sys.stdout.write(json.dumps(dedup_dict_list(classifier.recursive_classify(a))))

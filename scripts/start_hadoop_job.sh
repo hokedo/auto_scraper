@@ -92,3 +92,27 @@ VERBOSE=""
 
 set_params $@
 mappings $TYPE
+
+if [ "$PART" == "all" ] || [ "$PART" == "first" ] ; then
+    hadoop jar /usr/local/hadoop/contrib/streaming/hadoop-*-streaming.jar\
+        -Dstream.non.zero.exit.is.failure=false\
+        -Dmapred.map.tasks.speculative.execution=false\
+        -Dmapred.reduce.tasks=500\
+        -file "mapper.py"\
+        -file "utils.py"\
+        -input "$INPUT"\
+        -output "crawl-gen/$TYPE""_temp"\
+        -mapper "mapper.py $TYPE"\
+        -reducer "sort -u"
+    fi
+if [ "$PART" == "all" ] || [ "$PART" == "second" ] ; then
+    hadoop jar /usr/local/hadoop/contrib/streaming/hadoop-*-streaming.jar\
+        -Dstream.non.zero.exit.is.failure=false\
+        -Dmapred.map.tasks.speculative.execution=false\
+        -Dmapred.reduce.tasks=0\
+        -file "generate_inserts.py"\
+        -file "utils.py"\
+        -input "crawl-gen/$TYPE""_temp"\
+        -output "crawl-gen/$TYPE"\
+        -mapper "generate_inserts.py $TYPE"
+    fi

@@ -21,20 +21,23 @@ class server:
 			request_url = web.ctx.env.get("REQUEST_URI")
 			if request_url == "/":
 				web.header('Content-Type', 'text/html')
-				html_file = open("extractor_generator.html", "r")
+				html_file = open("./src/html/extractor_generator.html", "r")
 				html = html_file.read()
 				html_file.close()
 				return str(html)
 
-			resource_name = re.search(r"/(.+(\.css|\.js))", request_url)
+			resource_name = re.search(r"/(.+(\.css|\.js)$)", request_url)
 			if resource_name:
-				resource_file = open(resource_name.group(1))
-				resource = resource_file.read()
+
 				if re.search(".css$", request_url):
 					web.header('Content-Type', 'text/css')
+					resource_file = open("./src/css/" + resource_name.group(1))
 				elif re.search(".js$", request_url):
 					web.header('Content-Type', 'application/javascript')
+					resource_file = open("./src/js/" + resource_name.group(1))
 				
+				resource = resource_file.read()
+				resource_file.close()
 				return str(resource)
 
 			parameters = get_parameters(request_url)
@@ -45,6 +48,10 @@ class server:
 			else:
 				create_files(parameters)
 				content = "'Succesfully generated crawler'"
+				#crawler_file = open("data_extractor_test.py", "r")
+				#content = crawler_file.read()
+				#crawler_file.close()
+				#return content
 		except Exception as e:
 			content = "\"Internal Server Error: {}\"".format(e)
 			sys.stderr.write(str(traceback.format_exc()))

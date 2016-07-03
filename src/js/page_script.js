@@ -33,10 +33,9 @@ function requestPage(url){
 							console.log("requestPage() -> Setting up #content html ERROR");
 						}
 						modifyContent(); 
-					
-
+						selectClickableEvent()
 				});
-}
+	}
 
 function modifyContent(){
 	$("#content").find("a")
@@ -92,7 +91,7 @@ function generate_scripts(objects){
 			objects, 
 			function(data){
 						console.log(data);
-						download_file("data_extractor_test.py", "http://localhost:8081/test.py")
+						download_file("data_extractor_test.py", "http://localhost:8080/static/test.py")
 				});
 };
 
@@ -103,11 +102,11 @@ function download_file(name, path){
 	/////////////////
 	var milliseconds = 1000;
 	var start = new Date().getTime();
-  for (var i = 0; i < 1e7; i++) {
-    if ((new Date().getTime() - start) > milliseconds){
-      break;
-    }
-  }
+	for (var i = 0; i < 1e7; i++) {
+		if ((new Date().getTime() - start) > milliseconds){
+	 	 break;
+		}
+  	}
 	////////////////
 
 	var link = document.createElement('a');
@@ -123,13 +122,8 @@ function download_file(name, path){
 }
 
 
-
-//MAIN
-$(document).ready(function(){
-	$("#load_page").click(function(){
-		requestPage($("#page_url").val());
-
-		$(".SpecialClickable").click(function(e){ 
+function selectClickableEvent(){
+	$(".SpecialClickable").click(function(e){ 
 			//get the path of the clicked element and put in the input box and
 			//highlight the element yellow to check if the selection is correct
 			if($("input.Selected").attr("class").search("hotel_item") > -1 ){
@@ -147,6 +141,12 @@ $(document).ready(function(){
 								 });
 			console.log(FindReviewFrame($("input#ToSelect[name='text']").val()));
 			});
+}
+
+//MAIN
+$(document).ready(function(){
+	$("#load_page").click(function(){
+		requestPage($("#page_url").val());
 		});
 	$("input#ToSelect").click(function(e){
 		$(e.target).addClass("Selected");
@@ -171,6 +171,6 @@ $(document).ready(function(){
 						"review_frame":review_frame}
 		generate_scripts(objects);
 		//download_file("data_extractor_test.py", "http://localhost:8081/test.py")							  
-	})
+	});
 	
 });

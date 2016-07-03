@@ -28,6 +28,7 @@ def get_parameters(url):
 		selector = item[1]
 		match = re.match(r"^(.+)\[(.+)\]$", item[0])
 		sys.stderr.write(str(item) +'\n')
+
 		if match:
 			if match.group(1) == "hotel_items":
 				hotel_items.append({match.group(2) : selector})
@@ -37,10 +38,11 @@ def get_parameters(url):
 			review_frame = selector
 		elif item[0] == "page_url":
 			page_url = item[1]
-	output = {"hotel_items": hotel_items,
+			output.update({"page_url": page_url})
+	output.update({"hotel_items": hotel_items,
 				"review_items": review_items,
 				"review_frame": review_frame,
-				"page_url": page_url}
+				})
 
 	return output
 
@@ -84,27 +86,27 @@ def create_files(parameters):
 	 '\t'*4 + '}\n')
 
 	footers = """def extract_data(req):
-doc = pq(req['html'])
-result = {}
+	doc = pq(req['html'])
+	result = {}
 
-for template in [MAIN_PAGE_TEMPLATE, REVIEW_PAGE_TEMPLATE]:
-	extracted_data = extract_util.extract(doc, template, req['url'])
-	logger.debug("extracted: \\n%s", json.dumps(extracted_data, indent=2))
+	for template in [MAIN_PAGE_TEMPLATE, REVIEW_PAGE_TEMPLATE]:
+		extracted_data = extract_util.extract(doc, template, req['url'])
+		logger.debug("extracted: \\n%s", json.dumps(extracted_data, indent=2))
 
-	if extracted_data:
-		result.update(extracted_data)
+		if extracted_data:
+			result.update(extracted_data)
 
-return result
+	return result
 
 
 if __name__ == '__main__':
 
-for line in sys.stdin:
-	req = json.loads(line)
-	data = extract_data(req)
-	json.dump(data, sys.stdout)"""
+	for line in sys.stdin:
+		req = json.loads(line)
+		data = extract_data(req)
+		json.dump(data, sys.stdout)"""
 
-	f = open("test.py", "w")
+	f = open("./static/test.py", "w")
 	f.write(headers + "\n" + imports + "\n" + main_page + "\n" + review_page + "\n" + review_frame + "\n\n" + footers + "\n")
 	f.close()
 

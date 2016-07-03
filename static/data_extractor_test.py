@@ -14,12 +14,14 @@ logging.basicConfig(level=logging.INFO, stream=sys.stderr, format="%(asctime)s %
 logging.getLogger("extract.util").setLevel(logging.INFO)
 
 
-MAIN_PAGE_TEMPLATE = {'properties': {'address': [{'path': 'Hotel Address', 'pp': ['text']}],
+MAIN_PAGE_TEMPLATE = {'properties': {'address': [{'path': 'div.container > div.detail-bg > div.page-sub.clearfix > div.hotel-top.clearfix > div.hotel-name > ul.hotel-location > li > a',
+                             'pp': ['text']}],
                 'external_source_id': [{'path': 'External Id',
                                         'pp': ['text']}],
                 'name': [{'path': 'div.container > div.detail-bg > div.page-sub.clearfix > div.hotel-top.clearfix > div.hotel-name > h1',
                           'pp': ['text']}],
-                'score': [{'path': 'Hotel Score', 'pp': ['text']}]}}
+                'score': [{'path': 'div.container > div.detail-bg > div.page-sub.clearfix > div.hotel-top.clearfix > div.hotel-point.point-br-05 > span.right.point-mg.point-mg-05',
+                           'pp': ['text']}]}}
 REVIEW_TEMPLATE = {'properties': {'author': [{'path': 'a > span', 'pp': ['text']}],
                 'score': [{'path': 'div > span.comment-point.point-sm.point-sm-05',
                            'pp': ['text']}],
@@ -35,22 +37,22 @@ REVIEW_PAGE_TEMPLATE = {"properties": {
 
 
 def extract_data(req):
-doc = pq(req['html'])
-result = {}
+	doc = pq(req['html'])
+	result = {}
 
-for template in [MAIN_PAGE_TEMPLATE, REVIEW_PAGE_TEMPLATE]:
-	extracted_data = extract_util.extract(doc, template, req['url'])
-	logger.debug("extracted: \n%s", json.dumps(extracted_data, indent=2))
+	for template in [MAIN_PAGE_TEMPLATE, REVIEW_PAGE_TEMPLATE]:
+		extracted_data = extract_util.extract(doc, template, req['url'])
+		logger.debug("extracted: \n%s", json.dumps(extracted_data, indent=2))
 
-	if extracted_data:
-		result.update(extracted_data)
+		if extracted_data:
+			result.update(extracted_data)
 
-return result
+	return result
 
 
 if __name__ == '__main__':
 
-for line in sys.stdin:
-	req = json.loads(line)
-	data = extract_data(req)
-	json.dump(data, sys.stdout)
+	for line in sys.stdin:
+		req = json.loads(line)
+		data = extract_data(req)
+		json.dump(data, sys.stdout)

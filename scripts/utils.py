@@ -20,14 +20,15 @@ def get_parameters(url):
 	review_frame = ""
 	url = unquote_plus(url)
 	parameters = url.split("&")
-	parameters.pop(0) #remove the callback name
-	parameters.pop() #remove the datestamp
+	if re.match(".+_=[0-9]+$", url):
+		parameters.pop(0) #remove the callback name
+		parameters.pop() #remove the datestamp
 
 	for item in parameters:
+		sys.stderr.write("Item:" + str(item) +'\n')
 		item = item.split("=")
-		selector = item[1]
+		selector = item[1] if item and len(item) > 1 else ''
 		match = re.match(r"^(.+)\[(.+)\]$", item[0])
-		sys.stderr.write(str(item) +'\n')
 
 		if match:
 			if match.group(1) == "hotel_items":
@@ -39,6 +40,7 @@ def get_parameters(url):
 		elif item[0] == "page_url":
 			page_url = item[1]
 			output.update({"page_url": page_url})
+
 	output.update({"hotel_items": hotel_items,
 				"review_items": review_items,
 				"review_frame": review_frame,

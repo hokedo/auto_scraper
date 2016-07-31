@@ -17,7 +17,7 @@ app = web.application(urls, globals())
 class server:
 	def GET(self):
 		callback_name = web.input(callback='callback').callback
-		content = ''
+		content = json.dumps({"Error": "Couldn't parse url"})
 		try:
 			request_url = web.ctx.env.get("REQUEST_URI")
 			if request_url == "/":
@@ -49,12 +49,9 @@ class server:
 				create_files(parameters)
 				sys.stderr.write(str(parameters))
 				content = "'Succesfully generated crawler'"
-				#crawler_file = open("data_extractor_test.py", "r")
-				#content = crawler_file.read()
-				#crawler_file.close()
-				#return content
-			if "text" in parameters and len(parameters["text"]):
-				content = json.dumps({"message": "ok"})
+			if "selector" in parameters:
+				content = json.dumps({"type": "OK"})
+			
 		except Exception as e:
 			content = "\"Internal Server Error: {}\"".format(e)
 			sys.stderr.write(str(traceback.format_exc()))

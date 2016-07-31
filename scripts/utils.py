@@ -9,43 +9,34 @@ from urllib import unquote_plus
 import requests
 
 def requestPage(url):
-	s = requests.Session()
-	res = s.request("GET", url, verify=False)
-	return res.text.encode("utf-8")
+	#s = requests.Session()
+	#res = s.request("GET", url, verify=False)
+	#return res.text.encode("utf-8")
+	import os.path
+	f = open(os.path.dirname(__file__) + "/../gen_test.html", "r")
+	res = f.read()
+	f.close()
+	return res.decode('latin-1').encode("utf-8")
 
 def get_parameters(url):
+	sys.stderr.write("Recieved url: "+ str(url) + "\n")
 	output = {}
-	hotel_items = []
-	review_items = []
-	review_frame = ""
 	url = unquote_plus(url)
 	parameters = url.split("&")
-	if re.match(".+_=[0-9]+$", url):
-		parameters.pop(0) #remove the callback name
-		parameters.pop() #remove the datestamp
 
 	for item in parameters:
-		sys.stderr.write("Item:" + str(item) +'\n')
+		sys.stderr.write("Item:" + str(item) + '\n')
 		item = item.split("=")
 		selector = item[1] if item and len(item) > 1 else ''
 		match = re.match(r"^(.+)\[(.+)\]$", item[0])
-
 		if match:
-			if match.group(1) == "hotel_items":
-				hotel_items.append({match.group(2) : selector})
-			elif match.group(1) == "review_items":
-				review_items.append({match.group(2) : selector})
-		elif item[0] == "review_frame":
-			review_frame = selector
-		elif item[0] == "page_url":
-			page_url = item[1]
-			output.update({"page_url": page_url})
-
-	output.update({"hotel_items": hotel_items,
-				"review_items": review_items,
-				"review_frame": review_frame,
-				})
-
+			if match.group(1) in output.keys():
+				output[match.group(1)].append({match.group(2) : selector})
+			else:
+				output[match.group(1)] = [{match.group(2) : selector}]
+		else:
+			output[item[0]] = selector
+	
 	return output
 
 def create_files(parameters):

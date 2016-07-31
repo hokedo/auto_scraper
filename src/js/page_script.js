@@ -1,28 +1,9 @@
-function getPage(url){
-	console.log('url is: ' + url)
-	$.ajax({
-			url: 'proxy.php',
-			type: 'POST',
-			async: false,
-			data: {
-				address: url
-			},
-			success: function(data) {
-						console.log("Succes");
-						try{
-							$("#content").html(data);
-						}catch(e){
-							console.log("GetPage() -> Setting up #content html ERROR");
-						}
-						modifyContent(); 
-						}
-		});
-};
-
+var server_address = "127.0.0.1:8080";
+var classifications = {};
 function requestPage(url){
-	console.log("Creating python request for the page html")
+	console.log("Creating request to python server for the page html")
 	objects = {"page_url" : url};
-	$.getJSON('http://127.0.0.1:8080/?callback=?',
+	$.getJSON('http://' + server_address + '/?callback=?',
 			objects, 
 			function(data){
 						console.log("Succes");
@@ -37,6 +18,28 @@ function requestPage(url){
 				});
 	}
 
+function generate_scripts(objects){
+	console.log("Creating request to python server to create the data extractor")
+	$.getJSON('http://' + server_address + '/?callback=?',
+			objects, 
+			function(data){
+						console.log(data);
+						download_file("data_extractor_test.py", "http://localhost:8080/static/test.py")
+				});
+};
+
+function classify_text_request(object){
+	//object = {'selector' : <selector>, 'text': <text>}
+	console.log("Creating request to python server")
+	$.getJSON('http://' + server_address + '/?callback=?',
+				  		   object,
+				  		   function(data){
+				  		   		classifications[object.selector] = data.type;
+				  		   	}
+				  		   );
+	
+	}
+
 function modifyContent(){
 	$("#content").find("a")
 				 .each(function(){
@@ -45,7 +48,29 @@ function modifyContent(){
 				 .toArray()
 				 .forEach(makeClickable);
 	$("#content").removeClass("not-modified")
-				 .addClass("modified")
+				 .addClass("modified");
+	$("#content").children()
+				 .toArray()
+				 .forEach(classify);
+				 //leave it last for the moment
+				 //probably it modifies something in the dom
+				 //and the oder modification don't apply anymore
+};
+
+function classify(element, index, array){
+	var elem = $(element)
+	var text = validate(elem);
+
+	if(text){
+		classify_text_request({
+			'selector': elem.getPath(),
+			'text': text
+		})
+		
+	}
+	if(elem.children().length > 0){
+		elem.children().toArray().forEach(classify)
+	}
 };
 
 function makeClickable(element, index, array){
@@ -65,7 +90,7 @@ var validate = function(elem) {
 	element = $(element).children().remove().end().text($.trim($(element).text()));
 	if(element.text().trim().length > 0)
 		{	
-			return true;
+			return element.text().trim();
 		}
 	else {
 		return false;
@@ -83,16 +108,6 @@ function FindReviewFrame(text_path){
 		}
 	}
 	return current_item
-};
-
-function generate_scripts(objects){
-	console.log("Creating python request to create the data extractor")
-	$.getJSON('http://127.0.0.1:8080/?callback=?',
-			objects, 
-			function(data){
-						console.log(data);
-						download_file("data_extractor_test.py", "http://localhost:8080/static/test.py")
-				});
 };
 
 function download_file(name, path){
@@ -124,7 +139,7 @@ function download_file(name, path){
 
 function selectClickableEvent(){
 	$(".SpecialClickable").click(function(e){ 
-			//get the path of the clicked element and put in the input box and
+			//Get the path of the clicked element and put in the input box and
 			//highlight the element yellow to check if the selection is correct
 			if($("input.Selected").attr("class").search("hotel_item") > -1 ){
 				var path = $(e.target).removeClass("highlighted-blue SpecialClickable")

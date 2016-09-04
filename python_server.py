@@ -3,10 +3,12 @@ import re
 import web
 import sys
 import json
+import pickle
 import traceback
 from scripts.utils import get_parameters
 from scripts.utils import create_files
 from scripts.utils import requestPage
+from scripts.utils import bow
 urls = ('/.*', 'server')
 #render = web.template.render('templates/')
 
@@ -15,6 +17,9 @@ app = web.application(urls, globals())
 #my_form = web.form.Form(web.form.Textbox('', class_='textfield', id='textfield'),)
 
 class server:
+	f = open("./src/classifier/classifier.pickle")
+	classifier = pickle.load(f)
+	f.close()
 	def GET(self):
 		callback_name = web.input(callback='callback').callback
 		content = json.dumps({"Error": "Couldn't parse url"})
@@ -50,7 +55,8 @@ class server:
 				sys.stderr.write(str(parameters))
 				content = "'Succesfully generated crawler'"
 			if "selector" in parameters:
-				content = json.dumps({"type": "OK"})
+				token_type = self.classifier.classify(bow(parameters.get("text")))
+				content = json.dumps({"type": token_type})
 			
 		except Exception as e:
 			content = "\"Internal Server Error: {}\"".format(e)

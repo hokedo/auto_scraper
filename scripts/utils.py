@@ -150,3 +150,15 @@ char_range = [0, 127]
 
 def dedup_dict_list(l):
 	return [dict(t) for t in set([tuple(d.items()) for d in l])]
+
+def normalize(token):
+	if token.isdigit():
+		return "NUM"
+	return token.lower()
+
+def bow(text):
+	"""
+	Bag of words.
+	"""
+	return {normalize(token): True for token in set(text.split())}
+	

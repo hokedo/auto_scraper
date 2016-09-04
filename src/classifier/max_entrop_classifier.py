@@ -31,6 +31,9 @@ def bow(text):
 	"""
 	return {normalize(token): True for token in set(text.split())}
 
+def train(classifier, labels):
+	classifier.train()
+
 m = MaxentClassifier.train([(bow(text), label) for text, label in labels])
 
 

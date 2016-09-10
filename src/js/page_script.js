@@ -1,5 +1,9 @@
 var server_address = "127.0.0.1:8080";
 var classifications = {};
+var color_codes = {
+	"HOTEL_NAME": "highlighted-green",
+	"REVIEW_TEXT": "orange"
+};
 function requestPage(url){
 	console.log("Creating request to python server for the page html")
 	objects = {"page_url" : url};
@@ -35,6 +39,9 @@ function classify_text_request(object){
 				  		   object,
 				  		   function(data){
 				  		   		classifications[object.selector] = data.type;
+				  		   		if(data.type in color_codes){
+				  		   			$(object.selector).attr("class", color_codes[data.type]);
+				  		   		}
 				  		   	}
 				  		   );
 	
@@ -52,9 +59,9 @@ function modifyContent(){
 	$("#content").children()
 				 .toArray()
 				 .forEach(classify);
-				 //leave it last for the moment
+				 //leave it here for the moment
 				 //probably it modifies something in the dom
-				 //and the oder modification don't apply anymore
+				 //and the other modification don't apply anymore
 };
 
 function classify(element, index, array){

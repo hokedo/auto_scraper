@@ -50,6 +50,9 @@ h1#gen_title {
 .highlighted-green{
 	background-color: green;
 }
+.highlighted-orange{
+	background-color: orange;
+}
 .modified{
 	background-color: purple;
 }

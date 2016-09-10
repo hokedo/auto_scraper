@@ -7,9 +7,9 @@ from nltk.classify.maxent import MaxentClassifier
 Input training data and save a classifier to a file using pickle
 """
 labels = [
-	("Hotel Las Vegas", "HOTEL"),
-	("Opera Plaza Hotel", "HOTEL"),
-	("10 Angelina Street", "ADDRESS"),
+	("Hotel Las Vegas", "HOTEL_NAME"),
+	("Opera Plaza Hotel", "HOTEL_NAME"),
+	("10 Angelina Street", "HOTEL_ADDRESS"),
 ]
 
 def pread():

@@ -2,7 +2,12 @@ var server_address = "127.0.0.1:8080";
 var classifications = {};
 var color_codes = {
 	"HOTEL_NAME": "highlighted-green",
-	"REVIEW_TEXT": "orange"
+	"HOTEL_ADDRESS": "hotel_address",
+	"REVIEW_TEXT": "highlighted-gray",
+	"REVIEW_TITLE": "highlighted-black",
+	"REVIEW_AUTHOR": "review_red",
+	"REVIEW_DATE": "review_date",
+	"REVIEW_SCORE": "review_score"
 };
 function requestPage(url){
 	console.log("Creating request to python server for the page html")

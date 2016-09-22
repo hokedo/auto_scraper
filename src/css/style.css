@@ -41,6 +41,9 @@ h1#gen_title {
     width: 100%;
 }
 
+.modified{
+	background-color: purple;
+}
 .highlighted-yellow{
 	background-color: yellow;
 }
@@ -53,6 +56,18 @@ h1#gen_title {
 .highlighted-orange{
 	background-color: orange;
 }
-.modified{
-	background-color: purple;
+.highlighted-gray{
+	background-color: gray;
+}
+.highlighted-brown{
+	background-color: brown;
+}
+.highlighted-red{
+	background-color: red;
+}
+.highlighted-white{
+	background-color: white;
+}
+.highlighted-black{
+	background-color: black;
 }

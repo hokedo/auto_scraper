@@ -17,7 +17,7 @@ app = web.application(urls, globals())
 #my_form = web.form.Form(web.form.Textbox('', class_='textfield', id='textfield'),)
 
 class server:
-	f = open("./src/classifier/classifier.pickle")
+	f = open("./scripts/classifier/classifier.pickle")
 	classifier = pickle.load(f)
 	f.close()
 	def GET(self):

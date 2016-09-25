@@ -60,24 +60,40 @@ def filterSelectors(html, selectors):
 		result["HOTEL_NAME"] = randomElement(result["HOTEL_NAME"])
 	# filter review text and author
 	if selectors.get("REVIEW_TEXT"):
+		all_other_selectors = []
+		for key, value in selectors.items():
+			if key != "REVIEW_TEXT":
+				all_other_selectors += value
 		found = False
 		for key in ["REVIEW_AUTHOR", "REVIEW_DATE", "REVIEW_SCORE"]:
 			if key in selectors:
 				for text_selector in selectors.get("REVIEW_TEXT"):
-					for other_selector in selectors.get(key):
-						text_count = len(h(text_selector))
-						other_count = len(h(other_selector))
-						if text_count == other_count > 1:
-							#let's assume that there isn't just one review
-							result["REVIEW_TEXT"] = text_selector
-							result[key] = other_selector
-							found = True
-							break
+					if containsOthers(text_selector, all_other_selectors, h):
+						for other_selector in selectors.get(key):
+							text_count = len(h(text_selector))
+							other_count = len(h(other_selector))
+							if ((text_count == other_count > 1) and  
+								underSameFrame(text_selector, other_selector, h)):
+								#let's assume that there isn't just one review
+								result["REVIEW_TEXT"] = text_selector
+								result[key] = other_selector
+								found = True
+								break
 					if found:
 						break
 			if found:
 				break
 	return result
+
+def underSameFrame(selector1, selector2, pq_class, max_level=3):
+	parent = pq_class(selector1).parent()
+	current_level = 0
+	while current_level < max_level:
+		if parent.find(selector2):
+			return True
+		current_level += 1
+		parent = parent.parent()
+	return False
 
 def randomElement(item_list):
 	from random import choice

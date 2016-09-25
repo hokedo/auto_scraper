@@ -24,10 +24,10 @@ jQuery.fn.extend({
 			if ( count == 2){
 				return SlicePath(path);
 				}
+		}
 		else{
 			if ( count == 5){
 				return SlicePath(path);
-				}
 			}
 		}
 		// If this element is <div id="content" class="modified"> we've reached the end of the path.

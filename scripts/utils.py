@@ -37,9 +37,9 @@ def requestProccesedPage(url, classifier):
 	res = f.read()
 	f.close()
 	res = res.decode('latin-1').encode("utf-8")
-	highlightText(res)
 	selectors = classify(res, classifier)
 	final_selectors = filterSelectors(res, selectors)
+	res = highlightText(res)
 
 	return res, final_selectors
 
@@ -66,9 +66,6 @@ def filterSelectors(html, selectors):
 				for text_selector in selectors.get("REVIEW_TEXT"):
 					for other_selector in selectors.get(key):
 						text_count = len(h(text_selector))
-						print other_selector
-						print h(other_selector)
-						print len(h(other_selector))
 						other_count = len(h(other_selector))
 						if text_count == other_count > 1:
 							#let's assume that there isn't just one review
@@ -105,11 +102,14 @@ def containsOthers(item, others, pq_class):
 def highlightText(html):
 	from pyquery import PyQuery as pq
 	def highlight(PqObject, pq_class=pq, highlight_color="highlighted-blue"):
+		#highlight the selectable text in blue if you hover over it
 		if NodeText(PqObject):
 			PqObject.addClass(highlight_color)
+			PqObject.addClass("SpecialClickable")
 		for child in PqObject.children():
-			highlight(pq_class(child))
+			highlight(pq_class(child), pq_class)
 	h = pq(html)
+	h("a").attr("href", "")
 	highlight(h("body"), h)
 	return h.html()
 
@@ -143,6 +143,7 @@ def getPath(PqObejct, path="", recursive_depth=0, max_recursive_depth=5):
 		return path
 
 def NodeText(PqObejct):
+	#check if the element contains text without taking the children into account
 	node = PqObejct.clone()
 	node.children().remove()
 	if len(node.text().strip()):

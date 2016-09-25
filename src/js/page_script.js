@@ -20,13 +20,15 @@ function requestPage(url){
 						try{
 							selectors = data["selectors"];
 							console.log(selectors)
-							$("#content").html(data["html"]);
+							$("#content").html(data["html"])
+										 .removeClass("not-modified")
+				 						 .addClass("modified");
 							//document.getElementById("content").innerHTML = data["html"];
 						}catch(e){
 							console.log("requestPage() -> Setting up #content html ERROR");
 						}
 						//modifyContent(); 
-						//selectClickableEvent()
+						selectClickableEvent()
 						highlightText();
 						fillInputFields();
 				});
@@ -218,7 +220,7 @@ function selectClickableEvent(){
 			//highlight the element yellow to check if the selection is correct
 			if($("input.Selected").attr("class").search("hotel_item") > -1 ){
 				var path = $(e.target).removeClass("highlighted-blue SpecialClickable")
-										.getPath();
+										.getPath(undefined, 0, "hotel");
 			}else {
 				var path = $(e.target).removeClass("highlighted-blue SpecialClickable")
 										.getPath(undefined, undefined, "review");

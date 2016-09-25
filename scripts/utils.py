@@ -8,6 +8,16 @@ import pprint as pp
 from urllib import unquote_plus
 import requests
 
+color_codes = {
+	"HOTEL_NAME": "highlighted-green",
+	"HOTEL_ADDRESS": "hotel_address",
+	"REVIEW_TEXT": "highlighted-gray",
+	"REVIEW_TITLE": "highlighted-black",
+	"REVIEW_AUTHOR": "review_red",
+	"REVIEW_DATE": "review_date",
+	"REVIEW_SCORE": "highlighted-orange"
+}
+
 def requestPage(url):
 	#s = requests.Session()
 	#res = s.request("GET", url, verify=False)
@@ -17,6 +27,128 @@ def requestPage(url):
 	res = f.read()
 	f.close()
 	return res.decode('latin-1').encode("utf-8")
+
+def requestProccesedPage(url, classifier):
+	#s = requests.Session()
+	#res = s.request("GET", url, verify=False)
+	#return res.text.encode("utf-8")
+	import os.path
+	f = open(os.path.dirname(__file__) + "/../gen_test.html", "r")
+	res = f.read()
+	f.close()
+	res = res.decode('latin-1').encode("utf-8")
+	highlightText(res)
+	selectors = classify(res, classifier)
+	final_selectors = filterSelectors(res, selectors)
+
+	return res, final_selectors
+
+def filterSelectors(html, selectors):
+	from pyquery import PyQuery as pq
+	h = pq(html)
+	result = {}
+	# filter hotel title
+	if selectors.get("HOTEL_NAME"):
+		result["HOTEL_NAME"] = []
+		for i in range(len(selectors["HOTEL_NAME"])):
+			selector = selectors["HOTEL_NAME"][i]
+			if len(h(selector)) == 1 and not containsOthers(selector, selectors["HOTEL_NAME"], h):
+				if isDuplicate(selector, selectors["HOTEL_NAME"], h):
+					result["HOTEL_NAME"] = [selector]
+					break
+				result["HOTEL_NAME"].append(selector)
+		result["HOTEL_NAME"] = randomElement(result["HOTEL_NAME"])
+	# filter review text and author
+	if selectors.get("REVIEW_TEXT"):
+		found = False
+		for key in ["REVIEW_AUTHOR", "REVIEW_DATE", "REVIEW_SCORE"]:
+			if key in selectors:
+				for text_selector in selectors.get("REVIEW_TEXT"):
+					for other_selector in selectors.get(key):
+						text_count = len(h(text_selector))
+						print other_selector
+						print h(other_selector)
+						print len(h(other_selector))
+						other_count = len(h(other_selector))
+						if text_count == other_count > 1:
+							#let's assume that there isn't just one review
+							result["REVIEW_TEXT"] = text_selector
+							result[key] = other_selector
+							found = True
+							break
+					if found:
+						break
+			if found:
+				break
+	return result
+
+def randomElement(item_list):
+	from random import choice
+	return choice(item_list)
+
+def isDuplicate(item, others, pq_class):
+	_item = pq_class(item)
+	for other in others:
+		_other = pq_class(other)
+		if _other.text() == _item.text():
+			return True
+	return False
+
+def containsOthers(item, others, pq_class):
+	_item = pq_class(item)
+	for other in others:
+		_other = pq_class(other)
+		if _other.text() in _item.text() and _other.text() != _item.text():
+			return True
+	return False
+
+def highlightText(html):
+	from pyquery import PyQuery as pq
+	def highlight(PqObject, pq_class=pq, highlight_color="highlighted-blue"):
+		if NodeText(PqObject):
+			PqObject.addClass(highlight_color)
+		for child in PqObject.children():
+			highlight(pq_class(child))
+	h = pq(html)
+	highlight(h("body"), h)
+	return h.html()
+
+def classify(html, classifier):
+	from pyquery import PyQuery as pq
+	def _classify(PqObject, selectors):
+		text = PqObject.text().strip()
+		if text:
+			text_type = classifier.classify(bow(text))
+			selector = getPath(PqObject)
+			if selector:
+				if selectors.get(text_type):
+					if selector not in selectors[text_type]:
+						selectors[text_type].append(selector)
+				else:
+					selectors[text_type] = [selector]
+		for child in PqObject.children():
+			_classify(pq(child), selectors)			
+	h = pq(html)
+	selectors = {}
+	_classify(h("body"), selectors)
+	return selectors
+
+def getPath(PqObejct, path="", recursive_depth=0, max_recursive_depth=5):
+	if recursive_depth < max_recursive_depth:
+		match = re.match(r"\[<(.+)>\]", repr(PqObejct))
+		if match:
+			path = match.group(1) + " " + path
+			return (getPath(PqObejct.parent(), path, recursive_depth+1) or "").replace(". ", " ").strip()
+	else:
+		return path
+
+def NodeText(PqObejct):
+	node = PqObejct.clone()
+	node.children().remove()
+	if len(node.text().strip()):
+		return node.text()
+	else: 
+		return False
 
 def get_parameters(url):
 	sys.stderr.write("Recieved url: "+ str(url) + "\n")

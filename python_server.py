@@ -7,7 +7,7 @@ import pickle
 import traceback
 from scripts.utils import get_parameters
 from scripts.utils import create_files
-from scripts.utils import requestPage
+from scripts.utils import requestProccesedPage
 from scripts.utils import bow
 urls = ('/.*', 'server')
 #render = web.template.render('templates/')
@@ -48,8 +48,10 @@ class server:
 			parameters = get_parameters(request_url)
 			web.header('Content-Type', 'application/javascript')
 			if "page_url" in parameters and len(parameters["page_url"]):
-				html = requestPage(parameters["page_url"])
-				content = json.dumps({"html" : html})
+				#html = requestPage(parameters["page_url"])
+				#content = json.dumps({"html" : html})
+				html, selectors = requestProccesedPage(parameters["page_url"], self.classifier)
+				content = json.dumps({"html" : html, "selectors": selectors})
 			if "review_frame" in parameters and len(parameters["review_frame"]):
 				create_files(parameters)
 				sys.stderr.write(str(parameters))

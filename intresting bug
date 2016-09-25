@@ -1,0 +1,56 @@
+if selectors.get("REVIEW_TEXT"):
+		found = False
+		for key in ["REVIEW_AUTHOR", "REVIEW_SCORE", "REVIEW_DATE"]:
+			if key in selectors:
+				for text_selector in selectors.get("REVIEW_TEXT"):
+					for other_selector in selectors.get(key):
+						if len(h(text_selector)) == len(h(other_selector)) > 1: #<<<BUG HERE
+							#let's assume that there isn't just one review
+							result["REVIEW_TEXT"] = text_selector
+							result[key] = other_selector
+							found = True
+							break
+					if found:
+						break
+			if found:
+				break
+
+
+
+if selectors.get("REVIEW_TEXT"):
+		found = False
+		for key in ["REVIEW_AUTHOR", "REVIEW_SCORE", "REVIEW_DATE"]:
+			if key in selectors:
+				for text_selector in selectors.get("REVIEW_TEXT"):
+					for other_selector in selectors.get(key):
+						if 6 < len(h(text_selector)) == len(h(other_selector)):
+							#let's assume that there isn't just one review
+							result["REVIEW_TEXT"] = text_selector
+							result[key] = other_selector
+							found = True
+							break
+					if found:
+						break
+			if found:
+				break
+
+
+caused randomly by this?
+pq("div.detail-bg div#konum.page-sub.line-page div.near div#yakin-civar.box div.box-inner.")
+
+if selectors.get("REVIEW_TEXT"):
+		found = False
+		for key in ["REVIEW_AUTHOR", "REVIEW_SCORE", "REVIEW_DATE"]:
+			if key in selectors:
+				for text_selector in selectors.get("REVIEW_TEXT"):
+					for other_selector in selectors.get(key):
+						if 5 < len(h(text_selector)) == len(h(other_selector)):#somehow works with 5
+							#let's assume that there isn't just one review
+							result["REVIEW_TEXT"] = text_selector
+							result[key] = other_selector
+							found = True
+							break
+					if found:
+						break
+			if found:
+				break

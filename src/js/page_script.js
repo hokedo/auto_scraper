@@ -1,5 +1,6 @@
 var server_address = "127.0.0.1:8080";
 var classifications = {};
+var selectors = {};
 var color_codes = {
 	"HOTEL_NAME": "highlighted-green",
 	"HOTEL_ADDRESS": "hotel_address",
@@ -7,7 +8,7 @@ var color_codes = {
 	"REVIEW_TITLE": "highlighted-black",
 	"REVIEW_AUTHOR": "review_red",
 	"REVIEW_DATE": "review_date",
-	"REVIEW_SCORE": "review_score"
+	"REVIEW_SCORE": "highlighted-orange"
 };
 function requestPage(url){
 	console.log("Creating request to python server for the page html")
@@ -17,13 +18,17 @@ function requestPage(url){
 			function(data){
 						console.log("Succes");
 						try{
+							selectors = data["selectors"];
+							console.log(selectors)
 							$("#content").html(data["html"]);
 							//document.getElementById("content").innerHTML = data["html"];
 						}catch(e){
 							console.log("requestPage() -> Setting up #content html ERROR");
 						}
-						modifyContent(); 
-						selectClickableEvent()
+						//modifyContent(); 
+						//selectClickableEvent()
+						highlightText();
+						fillInputFields();
 				});
 	}
 
@@ -40,17 +45,37 @@ function generate_scripts(objects){
 function classify_text_request(object){
 	//object = {'selector' : <selector>, 'text': <text>}
 	console.log("Creating request to python server")
+	object.selector = object.selector.replace(".SpecialClickable", "").replace(".highlighted-blue", "")
 	$.getJSON('http://' + server_address + '/?callback=?',
 				  		   object,
 				  		   function(data){
-				  		   		classifications[object.selector] = data.type;
-				  		   		if(data.type in color_codes){
-				  		   			$(object.selector).attr("class", color_codes[data.type]);
+				  		   		if(data.type in classifications){
+				  		   			if(!classifications[data.type].includes(object.selector)){
+				  		   				classifications[data.type].push(object.selector)
+				  		   			};
 				  		   		}
+				  		   		else{
+				  		   			classifications[data.type] = [object.selector];
+				  		   		}
+				  		   		filter_classifications();
 				  		   	}
 				  		   );
 	
 	}
+
+function fillInputFields(){
+	if("HOTEL_NAME" in selectors){
+		$("input[value='Hotel Name']").attr("value", selectors["HOTEL_NAME"])
+	}
+};
+
+function highlightText(){
+	Object.keys(selectors).forEach(function(item, index, array){
+		if(item in color_codes){
+			$(selectors[item]).addClass(color_codes[item]);
+		}
+	})
+}
 
 function modifyContent(){
 	$("#content").find("a")
@@ -67,6 +92,32 @@ function modifyContent(){
 				 //leave it here for the moment
 				 //probably it modifies something in the dom
 				 //and the other modification don't apply anymore
+};
+
+function filter_classifications(){
+	//filter title selectors
+	if(typeof(classifications["HOTEL_NAME"]) != 'undefined' && 'forEach' in classifications["HOTEL_NAME"]){
+		classifications["HOTEL_NAME"].forEach(function(element, index, array){
+			if($(element).length == 1 && !ContainsOthers(element, array)){
+				if(typeof(selectors["HOTEL_NAME"]) != 'undefined'){
+					if(!selectors["HOTEL_NAME"].includes(element)){
+						selectors["HOTEL_NAME"].push(element)
+					}
+					for(var i = 0; i < selectors["HOTEL_NAME"].length; i++){
+						if($(selectors["HOTEL_NAME"][i]).length > 1 && !ContainsOthers(selectors["HOTEL_NAME"][i], array)){
+							selectors["HOTEL_NAME"].splice(i, 1);
+						};
+					};
+				}
+				else{
+					selectors["HOTEL_NAME"] = [element];
+				}
+				var random_item = RandomArrayElement(classifications["HOTEL_NAME"]);
+				$("*").removeClass(color_codes["HOTEL_NAME"])
+				$(random_item).addClass(color_codes["HOTEL_NAME"]);
+			}
+		})
+	}
 };
 
 function classify(element, index, array){
@@ -148,6 +199,18 @@ function download_file(name, path){
 	link.dispatchEvent(clickEvent);
 }
 
+function RandomArrayElement(array){
+	return array[Math.floor(Math.random()*array.length)]
+};
+
+function ContainsOthers(item, array){
+	for(var i = 0; i < array.length; i++){
+		if(item != array[i] && $(item).text().indexOf($(array[i]).text()) > -1){
+			return true;
+		}
+	}
+	return false;
+};
 
 function selectClickableEvent(){
 	$(".SpecialClickable").click(function(e){ 

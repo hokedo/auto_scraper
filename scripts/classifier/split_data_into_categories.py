@@ -31,5 +31,8 @@ if __name__ == "__main__":
 						if "\n" in text:
 							for chunk  in text.split("\n"):
 								print "{}\t{}".format(chunk, review_properties[prop])
+						elif "\t" in text:
+							for chunk  in text.split("\t"):
+								print "{}\t{}".format(chunk, review_properties[prop])
 						else:		
 							print "{}\t{}".format(text, review_properties[prop])

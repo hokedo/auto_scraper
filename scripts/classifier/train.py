@@ -34,15 +34,20 @@ def bow(text):
 	"""
 	return {normalize(token): True for token in set(text.split())}
 
-
+def asd(a):
+	print a
+	return a
 
 if __name__ == "__main__":
 	labels = []
 	for line in sys.stdin:
 		#input format: text \t label
 		data = line.strip().split("\t")
+		if len(data) != 2:
+			continue
 		data = tuple(data)
 		labels.append(data)
-	m = MaxentClassifier.train([(bow(text), label) for text, label in labels])
+	a = [(bow(text), label) for text, label in labels]
+	m = MaxentClassifier.train(a)
 	pwrite(m)
 

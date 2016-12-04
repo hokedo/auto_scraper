@@ -22,12 +22,12 @@ if __name__ == "__main__":
 			except:
 				continue
 			for prop in hotel_properties:
-				if prop in data and data[prop]:
+				if prop in data and data[prop] and data[prop].strip(","):
 					print "{}\t{}".format(data[prop].encode("utf-8"), hotel_properties[prop])
 			for prop in review_properties:
 				for review in data.get("review_list", []):
 					if prop in review and review[prop].strip():
-						text = review[prop].encode("utf-8").strip()
+						text = review[prop].encode("utf-8").strip()[:200]
 						if "\n" in text:
 							for chunk  in text.split("\n"):
 								print "{}\t{}".format(chunk, review_properties[prop])

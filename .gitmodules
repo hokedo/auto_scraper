@@ -1,0 +1,3 @@
+[submodule "crawl-gen"]
+	path = crawl-gen
+	url = hokedo@82.79.64.138:./Repos/crawl-gen

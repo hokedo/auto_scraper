@@ -1,3 +1,6 @@
 [submodule "crawl-gen"]
 	path = crawl-gen
 	url = hokedo@82.79.64.138:./Repos/crawl-gen
+[submodule "data-scraper"]
+	path = data-scraper
+	url = hokedo@82.79.64.138:/home/hokedo/Repos/data-scraper

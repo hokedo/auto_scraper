@@ -47,42 +47,7 @@ def filterSelectors(html, selectors):
 	from pyquery import PyQuery as pq
 	h = pq(html)
 	result = {}
-	# filter hotel title
-	if selectors.get("HOTEL_NAME"):
-		result["HOTEL_NAME"] = []
-		for i in range(len(selectors["HOTEL_NAME"])):
-			selector = selectors["HOTEL_NAME"][i]
-			if len(h(selector)) == 1 and not containsOthers(selector, selectors["HOTEL_NAME"], h):
-				if isDuplicate(selector, selectors["HOTEL_NAME"], h):
-					result["HOTEL_NAME"] = [selector]
-					break
-				result["HOTEL_NAME"].append(selector)
-		result["HOTEL_NAME"] = randomElement(result["HOTEL_NAME"])
-	# filter review text and author
-	if selectors.get("REVIEW_TEXT"):
-		all_other_selectors = []
-		for key, value in selectors.items():
-			if key != "REVIEW_TEXT":
-				all_other_selectors += value
-		found = False
-		for key in ["REVIEW_AUTHOR", "REVIEW_DATE", "REVIEW_SCORE"]:
-			if key in selectors:
-				for text_selector in selectors.get("REVIEW_TEXT"):
-					if containsOthers(text_selector, all_other_selectors, h):
-						for other_selector in selectors.get(key):
-							text_count = len(h(text_selector))
-							other_count = len(h(other_selector))
-							if ((text_count == other_count > 1) and  
-								underSameFrame(text_selector, other_selector, h)):
-								#let's assume that there isn't just one review
-								result["REVIEW_TEXT"] = text_selector
-								result[key] = other_selector
-								found = True
-								break
-					if found:
-						break
-			if found:
-				break
+	result = selectors
 	return result
 
 def underSameFrame(selector1, selector2, pq_class, max_level=3):

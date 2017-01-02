@@ -47,7 +47,8 @@ def filterSelectors(html, selectors):
 	from pyquery import PyQuery as pq
 	h = pq(html)
 	result = {}
-	result = selectors
+	for select_type, selector in selectors.iteritems():
+		result[select_type] = selector[0]
 	return result
 
 def underSameFrame(selector1, selector2, pq_class, max_level=3):

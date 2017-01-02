@@ -2,13 +2,13 @@ var server_address = "127.0.0.1:8080";
 var classifications = {};
 var selectors = {};
 var color_codes = {
-	"HOTEL_NAME": "highlighted-green",
-	"HOTEL_ADDRESS": "hotel_address",
-	"REVIEW_TEXT": "highlighted-gray",
+	"title": "highlighted-green",
+	"address": "hotel_address",
+	"type": "highlighted-gray",
 	"REVIEW_TITLE": "highlighted-black",
 	"REVIEW_AUTHOR": "review_red",
 	"REVIEW_DATE": "review_date",
-	"REVIEW_SCORE": "highlighted-orange"
+	"price": "highlighted-orange"
 };
 function requestPage(url){
 	console.log("Creating request to python server for the page html")
@@ -62,13 +62,16 @@ function classify_text_request(object){
 				  		   		filter_classifications();
 				  		   	}
 				  		   );
-	
 	}
 
 function fillInputFields(){
-	if("HOTEL_NAME" in selectors){
-		$("input[value='Hotel Name']").attr("value", selectors["HOTEL_NAME"])
-	}
+	Object.keys(selectors).forEach(function(element, index, array){
+		selector = "input[name='" + element + "']";
+		input_field = $(selector);
+		if(input_field.length > 0){
+			input_field.attr("value", selectors[element]);
+		}
+	})
 };
 
 function highlightText(){

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-
+import json
 import sys
 import pickle
 from nltk.classify.maxent import MaxentClassifier
@@ -41,13 +41,14 @@ def asd(a):
 if __name__ == "__main__":
 	labels = []
 	for line in sys.stdin:
-		#input format: text \t label
-		data = line.strip().split("\t")
-		if len(data) != 2:
-			continue
-		data = tuple(data)
-		labels.append(data)
+		data = json.loads(line.strip())
+		for key, value in data.iteritems():
+			labels.append((value, key))
 	a = [(bow(text), label) for text, label in labels]
 	m = MaxentClassifier.train(a)
 	pwrite(m)
-
+	print m.classify(bow("Hotel Las Vegas"))
+	print m.classify((bow("Cluj-Napoca")))
+	print m.classify((bow("decomandat")))
+	print m.classify((bow("altceva")))
+	print m.classify((bow("500 EUR")))

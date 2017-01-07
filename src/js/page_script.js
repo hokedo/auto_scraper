@@ -19,12 +19,18 @@ function requestPage(url){
 						console.log("Succes");
 						try{
 							selectors = data["selectors"];
-							console.log(selectors)
+
+							console.log(selectors);
+
 							$("#content").html(data["html"])
 										 .removeClass("not-modified")
 				 						 .addClass("modified");
+
 							//document.getElementById("content").innerHTML = data["html"];
 						}catch(e){
+							Object.keys(selectors).forEach(function(key){
+								console.log(key + ": " + $(selectors[key]).text());
+							});
 							console.log("requestPage() -> Setting up #content html ERROR");
 						}
 						//modifyContent(); 

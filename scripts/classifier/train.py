@@ -24,6 +24,7 @@ def pwrite(classifier):
 	f.close()
 
 def normalize(token):
+	token = token.strip()
 	if token.isdigit():
 		return "NUM"
 	return token.lower()

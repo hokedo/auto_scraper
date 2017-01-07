@@ -115,7 +115,7 @@ def classify(html, classifier):
 	_classify(h("body"), selectors)
 	return selectors
 
-def getPath(PqObejct, path="", recursive_depth=0, max_recursive_depth=5):
+def getPath(PqObejct, path="", recursive_depth=0, max_recursive_depth=4):
 	if recursive_depth < max_recursive_depth:
 		match = re.match(r"\[<(.+)>\]", repr(PqObejct))
 		if match:

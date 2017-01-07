@@ -43,7 +43,8 @@ if __name__ == "__main__":
 	for line in sys.stdin:
 		data = json.loads(line.strip())
 		for key, value in data.iteritems():
-			labels.append((value, key))
+			if value:
+				labels.append((value, key))
 	a = [(bow(text), label) for text, label in labels]
 	m = MaxentClassifier.train(a)
 	pwrite(m)

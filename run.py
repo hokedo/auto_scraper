@@ -1,0 +1,57 @@
+#!/usr/bin/env python
+# coding: utf-8
+
+import os
+import luigi
+import logging
+import datetime
+
+from argparse import ArgumentParser
+
+logging.config.fileConfig('config/logging.cfg')
+
+logger = logging.getLogger(__name__)
+
+def get_args():
+	argp = ArgumentParser(__doc__)
+	argp.add_argument(
+		"--date",
+		help="Date and hour for the current run.",
+		default=datetime.datetime.now()
+		)
+	argp.add_argument(
+		"--config",
+		help="Name of the configuration file located in the 'config' folder",
+		default="main"
+		)
+
+	args = vars(argp.parse_args())
+	return args
+
+def format_date(date):
+	date_format = config.get('core', 'date_format', '%Y-%m-%d_%H-%M')
+	if not isinstance(date, basestring):
+		return date.strftime(date_format)
+	else:
+		return date
+
+
+if __name__ == "__main__":
+	# Get CLI arguments
+	args = get_args()
+
+	config_path = os.path.join("config", "{}.cfg".format(args["config"]))
+	logger.info("Loading config from %s", config_path)
+	config = luigi.configuration.LuigiConfigParser.instance()
+	config.add_config_path(config_path)
+
+	# Add command line parameters
+	config.set('task_params', 'date', format_date(args['date']))
+
+	logger.info("Running with the following configuration:")
+	for section in config.sections():
+		logger.info("Section: %s", section)
+		for k, v in config.items(section):
+			logger.info("\t%s: %s", k, v)
+
+	

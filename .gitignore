@@ -1,1 +1,4 @@
 venv
+*.pyc
+luigi.cfg
+auto-scraper.log

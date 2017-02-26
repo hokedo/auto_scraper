@@ -7,6 +7,7 @@ import logging
 import datetime
 
 from argparse import ArgumentParser
+from auto_scraper.tasks.start_url import StartUrlTask
 
 logging.config.fileConfig('config/logging.cfg')
 
@@ -54,4 +55,13 @@ if __name__ == "__main__":
 		for k, v in config.items(section):
 			logger.info("\t%s: %s", k, v)
 
-	
+	# Write the current configuration into 'luigi.cfg'
+	# This config file will be used in case Tasks need
+	# external parameters
+	with open('luigi.cfg', 'w') as f:
+		config.write(f)
+
+	root_task = StartUrlTask()
+	tasks = [root_task]
+	luigi.interface.build(tasks, local_scheduler=True)
+

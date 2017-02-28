@@ -19,11 +19,15 @@ class StartUrlTask(BasePsqlTask):
 		with open(sql_file_path) as sql_file:
 			query = sql_file.read()
 
-		self.cursor.execute(query)
+		
 		with open(self.output().path, "w") as output:
+			self.cursor.execute(query)
 			for row in self.cursor.fetchall():
 				request = dict(row)
 				output.write(json.dumps(request) + "\n")
+
+		self.cursor.close()
+		self.connection.close()
 
 	def output(self):
 		output_folder = self.config_parser.get("jobs", "output_folder")

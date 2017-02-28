@@ -56,6 +56,7 @@ if __name__ == "__main__":
 			logger.info("\t%s: %s", k, v)
 
 	# Write the current configuration into 'luigi.cfg'
+	# (default config file for luigi)
 	# This config file will be used in case Tasks need
 	# external parameters
 	with open('luigi.cfg', 'w') as f:

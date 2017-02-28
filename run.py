@@ -8,6 +8,7 @@ import datetime
 
 from argparse import ArgumentParser
 from auto_scraper.tasks.start_url import StartUrlTask
+from auto_scraper.tasks.crawl import CrawlTask
 
 logging.config.fileConfig('config/logging.cfg')
 
@@ -72,7 +73,6 @@ if __name__ == "__main__":
 	run_output = os.path.join(output_folder, current_date)
 	os.makedirs(run_output)
 
-	root_task = StartUrlTask()
-	tasks = [root_task]
+	tasks = [StartUrlTask(), CrawlTask()]
 	luigi.interface.build(tasks, local_scheduler=True)
 

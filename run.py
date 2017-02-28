@@ -11,7 +11,7 @@ from auto_scraper.tasks.start_url import StartUrlTask
 
 logging.config.fileConfig('config/logging.cfg')
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger()
 
 def get_args():
 	argp = ArgumentParser(__doc__)
@@ -60,6 +60,16 @@ if __name__ == "__main__":
 	# external parameters
 	with open('luigi.cfg', 'w') as f:
 		config.write(f)
+
+	# Create output folder if it doesn't exist
+	output_folder = config.get("jobs", "output_folder")
+	if not os.path.isdir(output_folder):
+		os.makedirs(output_folder)
+
+	# Create folder for the current run.
+	current_date = config.get("task_params", "date")
+	run_output = os.path.join(output_folder, current_date)
+	os.makedirs(run_output)
 
 	root_task = StartUrlTask()
 	tasks = [root_task]

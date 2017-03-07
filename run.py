@@ -75,4 +75,3 @@ if __name__ == "__main__":
 
 	tasks = [StartUrlTask(), CrawlTask()]
 	luigi.interface.build(tasks, local_scheduler=True)
-

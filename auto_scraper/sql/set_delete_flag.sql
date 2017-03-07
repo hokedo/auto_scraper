@@ -1,0 +1,1 @@
+UPDATE craw.advert SET to_be_deleted = true;

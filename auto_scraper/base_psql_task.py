@@ -23,7 +23,7 @@ class BasePsqlTask(luigi.Task):
 		self.database = self.config_parser.get("db", "database")
 		self.username = self.config_parser.get("db", "username")
 		self.password = self.pgpass()
-		self.get_connection()
+		#self.get_connection()
 
 	def run(self):
 		pass

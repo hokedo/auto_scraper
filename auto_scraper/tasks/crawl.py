@@ -22,6 +22,8 @@ class CrawlTask(luigi.Task):
 		return StartUrlTask()
 
 	def run(self):
+		# Append system path with the folder for the crawlers/scrapers
+		# It will be later needed by 'start_crawling'
 		current_dir = os.getcwd()
 		scrapers_folder = os.path.join(current_dir, "data_scraper/scrapers")
 		sys.path.append(scrapers_folder)
@@ -34,9 +36,9 @@ class CrawlTask(luigi.Task):
 				for line in crawl_input:
 					request_object = json.loads(line)
 					request_object["url"] = request_object.get("start_url")
-					data = start_crawling(request_object)
-					if data:
-						crawl_output.write(json.dumps(data) + "\n")
+					for data in start_crawling(request_object):
+						if data:
+							crawl_output.write(json.dumps(data) + "\n")
 
 	def output(self):
 		output_folder = self.config_parser.get("jobs", "output_folder")

@@ -15,6 +15,8 @@ class StartUrlTask(BasePsqlTask):
 	"""
 
 	def run(self):
+		self.get_connection()
+		
 		sql_file_path = self.config_parser.get("jobs", "StartUrlTaskSql")
 		with open(sql_file_path) as sql_file:
 			query = sql_file.read()

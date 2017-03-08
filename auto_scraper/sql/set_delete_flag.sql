@@ -1,1 +1,1 @@
-UPDATE craw.advert SET to_be_deleted = true;
+UPDATE data.advert SET to_be_deleted = true

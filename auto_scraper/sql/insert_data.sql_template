@@ -1,1 +1,1 @@
-INSERT INTO data.advert ({columns}) VALUES ({values})
+INSERT INTO data.advert ({keys}) VALUES ({values})

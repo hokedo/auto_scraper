@@ -1,0 +1,1 @@
+UPDATE data.advert SET to_be_deleted = false WHERE url = '{}'

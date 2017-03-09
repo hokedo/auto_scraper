@@ -1,0 +1,1 @@
+DELETE FROM data.advert WHERE to_be_deleted = true;

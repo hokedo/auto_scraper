@@ -9,7 +9,9 @@ import datetime
 from argparse import ArgumentParser
 from auto_scraper.tasks.start_url import StartUrlTask
 from auto_scraper.tasks.crawl import CrawlTask
-from auto_scraper.tasks.deduplication import DeduplicationTask
+from auto_scraper.tasks.update_db import UpdateDBTask
+from auto_scraper.tasks.delete_data import DeleteOldDataTask
+from auto_scraper.tasks.report import ReportTask
 
 logging.config.fileConfig('config/logging.cfg')
 
@@ -74,5 +76,11 @@ if __name__ == "__main__":
 	run_output = os.path.join(output_folder, current_date)
 	os.makedirs(run_output)
 
-	tasks = [StartUrlTask(), CrawlTask(), DeduplicationTask()]
+	tasks = [
+		StartUrlTask(),
+		CrawlTask(),
+		UpdateDBTask(),
+		DeleteOldDataTask(),
+		ReportTask()
+	]
 	luigi.interface.build(tasks, local_scheduler=True)

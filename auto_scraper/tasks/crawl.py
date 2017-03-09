@@ -6,11 +6,12 @@ import sys
 import json
 import luigi
 
+from auto_scraper.base import BaseTask
 from data_scraper.scrape import start_crawling
 from auto_scraper.tasks.start_url import StartUrlTask
 
 
-class CrawlTask(luigi.Task):
+class CrawlTask(BaseTask):
 	"""
 	The task that takes the output from start_url Task 
 	and crawls and returns just the urls you are interested in
@@ -41,9 +42,7 @@ class CrawlTask(luigi.Task):
 							crawl_output.write(json.dumps(data) + "\n")
 
 	def output(self):
-		output_folder = self.config_parser.get("jobs", "output_folder")
-		job_date = self.config_parser.get("task_params", "date")
 		job_output = self.config_parser.get("jobs", "CrawlTaskOutput")
-		output = os.path.join(output_folder, job_date, job_output)
+		output = self.create_output_path(job_output)
 		return luigi.LocalTarget(output)
 

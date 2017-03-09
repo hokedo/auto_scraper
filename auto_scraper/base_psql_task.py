@@ -3,13 +3,12 @@
 
 import os
 import luigi
-import logging
 import psycopg2
 import psycopg2.extras
 
-logger = logging.getLogger()
+from auto_scraper.base import BaseTask
 
-class BasePsqlTask(luigi.Task):
+class BasePsqlTask(BaseTask):
 	"""
 	Base Task Class if you need to query the database
 	Don't forget to close self.connection after all the
@@ -17,7 +16,6 @@ class BasePsqlTask(luigi.Task):
 	"""
 	def __init__(self):
 		super(BasePsqlTask, self).__init__()
-		self.config_parser = luigi.configuration.get_config()
 		self.port = self.config_parser.getint("db", "port")
 		self.host = self.config_parser.get("db", "host")
 		self.database = self.config_parser.get("db", "database")

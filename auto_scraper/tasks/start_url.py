@@ -4,8 +4,8 @@
 import os
 import json
 import luigi
-from auto_scraper.base_psql_task import BasePsqlTask
 
+from auto_scraper.base_psql_task import BasePsqlTask
 
 class StartUrlTask(BasePsqlTask):
 	"""
@@ -32,9 +32,7 @@ class StartUrlTask(BasePsqlTask):
 		self.connection.close()
 
 	def output(self):
-		output_folder = self.config_parser.get("jobs", "output_folder")
-		job_date = self.config_parser.get("task_params", "date")
 		job_output = self.config_parser.get("jobs", "StartUrlTaskOutput")
-		output = os.path.join(output_folder, job_date, job_output)
+		output = self.create_output_path(job_output)
 		return luigi.LocalTarget(output)
 

@@ -55,7 +55,7 @@ class ReportTask(BaseTask):
 			requests.post(
 							slack_hook,
 							json={
-	            				"text": "Auto Scaper Report: {}".format(report_data),
+	            				"text": "Auto Scraper Report: {}".format(report_data),
 	    					}
 	    				)
 

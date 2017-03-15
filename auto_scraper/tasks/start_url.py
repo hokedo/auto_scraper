@@ -5,7 +5,6 @@ import os
 import json
 import luigi
 
-from auto_scraper.tasks.get_proxy import ProxyTask
 from auto_scraper.base_psql_task import BasePsqlTask
 
 class StartUrlTask(BasePsqlTask):
@@ -14,8 +13,6 @@ class StartUrlTask(BasePsqlTask):
 	for each domain and generates the request object
 	for the crawlers.
 	"""
-	def requires(self):
-		return ProxyTask()
 
 	def run(self):
 		self.get_connection()

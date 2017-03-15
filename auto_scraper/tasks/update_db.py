@@ -50,6 +50,7 @@ class UpdateDBTask(BasePsqlTask):
 					data = json.loads(line.strip())
 					if data.get("data"):
 						data["data"]["url"] = data["url"]
+						data["data"]["domain"] = data["domain"]
 						to_insert = self.key_value_split(data["data"])
 
 						# Not really happy with this part

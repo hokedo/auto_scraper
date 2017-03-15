@@ -7,6 +7,8 @@ import logging
 import datetime
 
 from argparse import ArgumentParser
+
+from auto_scraper.tasks.get_proxy import ProxyTask
 from auto_scraper.tasks.start_url import StartUrlTask
 from auto_scraper.tasks.crawl import CrawlTask
 from auto_scraper.tasks.update_db import UpdateDBTask
@@ -14,7 +16,6 @@ from auto_scraper.tasks.delete_data import DeleteOldDataTask
 from auto_scraper.tasks.report import ReportTask
 
 logging.config.fileConfig('config/logging.cfg')
-
 logger = logging.getLogger()
 
 def get_args():
@@ -77,6 +78,7 @@ if __name__ == "__main__":
 	os.makedirs(run_output)
 
 	tasks = [
+		ProxyTask(),
 		StartUrlTask(),
 		CrawlTask(),
 		UpdateDBTask(),

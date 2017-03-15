@@ -4,6 +4,7 @@
 import os
 import luigi
 import logging
+logging.config.fileConfig('config/logging.cfg')
 
 class BaseTask(luigi.Task):
 	"""

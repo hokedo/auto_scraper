@@ -1,7 +1,7 @@
 
 [submodule "crawl_gen"]
 	path = crawl_gen
-	url = 82.79.64.138:./Repos/crawl_gen
+	url = git@github.com:hokedo/crawl_gen.git
 [submodule "data_scraper"]
 	path = data_scraper
-	url = 82.79.64.138:./Repos/data_scraper
+	url = git@github.com:hokedo/data_scraper.git

@@ -70,5 +70,7 @@ class ProxyTask(BaseTask):
 			self.logger.info("Proxy checker timed out on address:\t%s", proxy_address)
 		except ValueError:
 			self.logger.info("Invalid response from proxy checker on addres:\t%s", proxy_address)
+		except Exception as e:
+			self.logger.warn("ProxyTask Exception:\t%s", str(e))
 
 		return False

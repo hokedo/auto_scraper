@@ -48,14 +48,19 @@ class ProxyTask(BaseTask):
 		return luigi.LocalTarget(output)
 
 	def get_proxy_ip(self, url):
-		self.logger.info("Requesting proxy list url:\t%s", url)
-		table_row_selector = "#content table[align='center'][cellspacing='1'][cellpadding='3'] tr"
-		response = requests.get(url, headers=self.headers, timeout=1, verify=False)
-		doc = pq(response.text)
-		for row in doc(table_row_selector):
-			proxy_ip = pq(row).find('a[title="View this Proxy details"]').text()
-			if proxy_ip and self.valid_proxy(proxy_ip):
-				return proxy_ip
+		while url:
+			self.logger.info("Requesting proxy list url:\t%s", url)
+			table_row_selector = "#content table[align='center'][cellspacing='1'][cellpadding='3'] tr"
+			response = requests.get(url, headers=self.headers, timeout=1, verify=False)
+			doc = pq(response.text)
+			for row in doc(table_row_selector):
+				proxy_ip = pq(row).find('a[title="View this Proxy details"]').text()
+				if proxy_ip and self.valid_proxy(proxy_ip):
+					return proxy_ip
+
+			current_page_link = doc("table[border='0'] a:has('b')")[-1]
+			next_page_link = pq(current_page_link).next().attr("href")
+			url = next_page_link
 
 	def valid_proxy(self, proxy_address):
 		self.logger.info("Testing proxy:\t%s", proxy_address)

@@ -78,9 +78,9 @@ class UpdateDBTask(BasePsqlTask):
 		self.cursor.close()
 		self.connection.close()
 
-	def output_file(self):
+	def output(self):
 		job_output_file = self.config_parser.get("jobs", "UpdateDBTaskOutput")
-		output_file = self.create_output_file_path(job_output_file)
+		output_file = self.create_output_path(job_output_file)
 		return luigi.LocalTarget(output_file)
 
 	def key_value_split(self, dictionary):

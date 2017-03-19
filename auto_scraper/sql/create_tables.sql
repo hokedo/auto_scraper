@@ -1,3 +1,5 @@
+CREATE ROLE rw_user WITH LOGIN;
+
 CREATE SCHEMA crawl;
 GRANT USAGE ON SCHEMA crawl TO rw_user;
 

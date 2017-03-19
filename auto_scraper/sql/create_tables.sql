@@ -33,3 +33,4 @@ CREATE TABLE data.advert
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.advert TO rw_user;
 
+ALTER DATABASE auto_scraper SET datestyle TO "dmy";

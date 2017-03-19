@@ -12,7 +12,7 @@ CREATE TABLE crawl.url
   domain character varying NOT NULL
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE crawl.url TO rw_user;
-INSERT INTO crawl.url (url, domain)
+INSERT INTO crawl.url (start_url, domain)
 VALUES ('http://www.piata-az.ro/anunturi/apartamente-de-inchiriat-1031', 'piata-az');
 
 CREATE SCHEMA data;

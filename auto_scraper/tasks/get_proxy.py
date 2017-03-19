@@ -7,6 +7,8 @@ import json
 import luigi
 import requests
 
+from urlparse import urljoin
+
 from requests.exceptions import ReadTimeout
 from requests.exceptions import ConnectTimeout
 
@@ -48,6 +50,7 @@ class ProxyTask(BaseTask):
 		return luigi.LocalTarget(output)
 
 	def get_proxy_ip(self, url):
+		start_url = url
 		while url:
 			self.logger.info("Requesting proxy list url:\t%s", url)
 			table_row_selector = "#content table[align='center'][cellspacing='1'][cellpadding='3'] tr"
@@ -60,7 +63,7 @@ class ProxyTask(BaseTask):
 
 			current_page_link = doc("table[border='0'] a:has('b')")[-1]
 			next_page_link = pq(current_page_link).next().attr("href")
-			url = next_page_link
+			url = urljoin(start_url, next_page_link)
 
 	def valid_proxy(self, proxy_address):
 		self.logger.info("Testing proxy:\t%s", proxy_address)

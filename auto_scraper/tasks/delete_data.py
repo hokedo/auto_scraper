@@ -33,15 +33,16 @@ class DeleteOldDataTask(BasePsqlTask):
 		# generate the report
 		self.cursor.execute(count_flagged_query)
 		with open(output_file, "w") as output:
-			count = {}
+			count = []
 			for row in self.cursor.fetchall():
-				count.update(dict(row))
+				count.append(dict(row))
 			output.write(json.dumps(count) + "\n")
 
 		self.cursor.execute(delete_flagged_query)
 		affected_rows = self.cursor.rowcount
 		self.logger.info("Deleted %d entries from database", affected_rows)
 
+		self.connection.commit()
 		self.cursor.close()
 		self.connection.close()
 

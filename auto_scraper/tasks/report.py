@@ -28,7 +28,7 @@ class ReportTask(BaseTask):
 		with open(input_file) as input:
 			report_data = {}
 			report_data["domain_deletions"] = json.loads(input.read())
-			report_data["total_deleted"] = sum(report_data["domain_deletions"].values())
+			report_data["total_deleted"] = sum([item.get("count", 0) for item in report_data["domain_deletions"]])
 			with open(inserted_data_file) as inserted_data:
 				report_data["domain_inserts"] = {}
 				counter = 0

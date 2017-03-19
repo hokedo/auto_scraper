@@ -24,8 +24,8 @@ class UpdateDBTask(BasePsqlTask):
 		return CrawlTask()
 
 	def run(self):
-		input_file = self.requires().output().path
-		output_file = self.output().path
+		input_file_path = self.requires().output().path
+		output_file_path = self.output().path
 
 		self.get_connection()
 		
@@ -41,12 +41,9 @@ class UpdateDBTask(BasePsqlTask):
 		with open(sql_file_path) as sql_file:
 			insert_query = sql_file.read()
 
-		# I know that I'm redefining the built-in
-		# 'input'. Couldn't get any more creative
-		# for the name of this variable
-		with open(input_file) as input:
-			with open(output_file, "w") as output:
-				for line in input.readlines():
+		with open(input_file_path) as input_file:
+			with open(output_file_path, "w") as output_file:
+				for line in input_file.readlines():
 					data = json.loads(line.strip())
 					if data.get("data"):
 						data["data"]["url"] = data["url"]
@@ -59,6 +56,7 @@ class UpdateDBTask(BasePsqlTask):
 
 						try:
 							self.cursor.execute(insert_query.format(keys=keys, values=values))
+							output_file.write("{}\t{}\n".format(data["url"], data["domain"]))
 
 						except IntegrityError as e:
 							# Exception thrown in case
@@ -76,24 +74,23 @@ class UpdateDBTask(BasePsqlTask):
 							continue
 
 						self.connection.commit()
-						output.write("{}\t{}\n".format(data["url"], data["domain"]))
 
 		self.cursor.close()
 		self.connection.close()
 
-	def output(self):
-		job_output = self.config_parser.get("jobs", "DeplicationTaskOutput")
-		output = self.create_output_path(job_output)
-		return luigi.LocalTarget(output)
+	def output_file(self):
+		job_output_file = self.config_parser.get("jobs", "UpdateDBTaskOutput")
+		output_file = self.create_output_file_path(job_output_file)
+		return luigi.LocalTarget(output_file)
 
 	def key_value_split(self, dictionary):
-		output = {"keys": [], "values": []}
+		output_file = {"keys": [], "values": []}
 
 		for key, value in dictionary.iteritems():
-			output["keys"].append(key)
-			output["values"].append(value)
+			output_file["keys"].append(key)
+			output_file["values"].append(value)
 
-		return output
+		return output_file
 
 	def sql_stringify_array(self, array):
 		return repr(array).replace("]", "").replace("[", "")

@@ -63,4 +63,3 @@ class ReportTask(BaseTask):
 		job_output = self.config_parser.get("jobs", "ReportTaskOutput")
 		output = self.create_output_path(job_output)
 		return luigi.LocalTarget(output)
-

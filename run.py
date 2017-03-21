@@ -14,6 +14,7 @@ from auto_scraper.tasks.crawl import CrawlTask
 from auto_scraper.tasks.update_db import UpdateDBTask
 from auto_scraper.tasks.delete_data import DeleteOldDataTask
 from auto_scraper.tasks.report import ReportTask
+from auto_scraper.tasks.clean import CleanUpTask
 
 logging.config.fileConfig('config/logging.cfg')
 logger = logging.getLogger()
@@ -83,6 +84,7 @@ if __name__ == "__main__":
 		CrawlTask(),
 		UpdateDBTask(),
 		DeleteOldDataTask(),
-		ReportTask()
+		ReportTask(),
+		CleanUpTask()
 	]
 	luigi.interface.build(tasks, local_scheduler=True)

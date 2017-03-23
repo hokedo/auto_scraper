@@ -8,6 +8,7 @@ import luigi
 from auto_scraper.tasks.crawl import CrawlTask
 from auto_scraper.base_psql_task import BasePsqlTask
 
+from psycopg2 import DataError
 from psycopg2 import InternalError
 from psycopg2 import IntegrityError
 from psycopg2 import ProgrammingError
@@ -68,7 +69,7 @@ class UpdateDBTask(BasePsqlTask):
 							# entry doesn't get deleted
 							self.cursor.execute(reset_query.format(data["url"]))
 
-						except (ProgrammingError, InternalError) as e:
+						except (ProgrammingError, InternalError, DataError) as e:
 							self.logger.error(str(e))
 							self.logger.error(json.dumps(data["data"]))
 							continue

@@ -58,7 +58,9 @@ class ProxyTask(BaseTask):
 			doc = pq(response.text)
 			for row in doc(table_row_selector):
 				proxy_ip = pq(row).find('a[title="View this Proxy details"]').text()
-				if proxy_ip and self.valid_proxy(proxy_ip):
+				proxy_port = pq(row).find("a[title^='Select proxies with port number']").text().strip()
+				proxy_address = "{}:{}".format(proxy_ip, proxy_port)
+				if proxy_ip and self.valid_proxy(proxy_address):
 					return proxy_ip
 
 			current_page_link = doc("table[border='0'] a:has('b')")[-1]
@@ -72,12 +74,13 @@ class ProxyTask(BaseTask):
 		try:
 			response = requests.get(test_url, proxies=proxies, timeout=10, verify=False)
 			ip = json.loads(response.text).get("origin")
-			if ip == proxy_address:
+			if ip == proxy_address.split(":")[0]:
 				return True
 		except (ConnectTimeout, ReadTimeout):
 			self.logger.info("Proxy checker timed out on address:\t%s", proxy_address)
 		except ValueError:
-			self.logger.info("Invalid response from proxy checker on addres:\t%s", proxy_address)
+			self.logger.info("Invalid response from proxy checker on address:\t%s", proxy_address)
+			self.logger.info(response.text)
 		except Exception as e:
 			self.logger.warn("ProxyTask Exception:\t%s", str(e))
 

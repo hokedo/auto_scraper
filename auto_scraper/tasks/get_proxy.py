@@ -51,21 +51,26 @@ class ProxyTask(BaseTask):
 
 	def get_proxy_ip(self, url):
 		start_url = url
-		while url:
-			self.logger.info("Requesting proxy list url:\t%s", url)
-			table_row_selector = "#content table[align='center'][cellspacing='1'][cellpadding='3'] tr"
-			response = requests.get(url, headers=self.headers, timeout=1, verify=False)
-			doc = pq(response.text)
-			for row in doc(table_row_selector):
-				proxy_ip = pq(row).find('a[title="View this Proxy details"]').text()
-				proxy_port = pq(row).find("a[title^='Select proxies with port number']").text().strip()
-				proxy_address = "{}:{}".format(proxy_ip, proxy_port)
-				if proxy_ip and self.valid_proxy(proxy_address):
-					return proxy_ip
+		retry_count = 0
+		while url and retry_count < 5:
+			try:
+				self.logger.info("Requesting proxy list url:\t%s", url)
+				table_row_selector = "#content table[align='center'][cellspacing='1'][cellpadding='3'] tr"
+				response = requests.get(url, headers=self.headers, timeout=1, verify=False)
+				doc = pq(response.text)
+				for row in doc(table_row_selector):
+					proxy_ip = pq(row).find('a[title="View this Proxy details"]').text()
+					proxy_port = pq(row).find("a[title^='Select proxies with port number']").text().strip()
+					proxy_address = "{}:{}".format(proxy_ip, proxy_port)
+					if proxy_ip and self.valid_proxy(proxy_address):
+						return proxy_address
 
-			current_page_link = doc("table[border='0'] a:has('b')")[-1]
-			next_page_link = pq(current_page_link).next().attr("href")
-			url = urljoin(start_url, next_page_link)
+				current_page_link = doc("table[border='0'] a:has('b')")[-1]
+				next_page_link = pq(current_page_link).next().attr("href")
+				url = urljoin(start_url, next_page_link)
+			except Exception as e:
+				self.logger.error(str(e))
+				retry_count += 1
 
 	def valid_proxy(self, proxy_address):
 		self.logger.info("Testing proxy:\t%s", proxy_address)

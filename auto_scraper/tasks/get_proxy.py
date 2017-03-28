@@ -27,8 +27,8 @@ class ProxyTask(BaseTask):
 
 	def run(self):
 		output_file_path = self.output().path
-		proxy_list_https = "http://www.xroxy.com/proxy--Anonymous--ssl.htm"
-		proxy_list_http = "http://www.xroxy.com/proxy--Anonymous--nossl.htm" 
+		proxy_list_https = "http://www.xroxy.com/proxylist.php?port=&type=Anonymous&ssl=ssl&country=FR&latency=&reliability=#table"
+		proxy_list_http = "http://www.xroxy.com/proxylist.php?port=&type=Anonymous&ssl=nossl&country=FR&latency=&reliability=#table"
 		proxies = {}
 
 		http_proxy = self.get_proxy_ip(proxy_list_http)

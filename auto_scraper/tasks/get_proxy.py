@@ -13,26 +13,24 @@ from requests.exceptions import ReadTimeout
 from requests.exceptions import ConnectTimeout
 
 from pyquery import PyQuery as pq
-from auto_scraper.base import BaseTask
+from auto_scraper.base_psql_task import BasePsqlTask
 
-class ProxyTask(BaseTask):
+class ProxyTask(BasePsqlTask):
 	"""
 	Find proxies to use for crawling
 	"""
 	headers = {
 		'Accept-Charset': 'utf-8;q=0.7,*;q=0.7',
-	 	'Accept-Language': 'en-US,en;q=0.8,de-DE;q=0.6,de;q=0.4,en;q=0.2',
-	 	'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.2.16) Gecko/20110319 Firefox/3.6.16'
-	 }
+		'Accept-Language': 'en-US,en;q=0.8,de-DE;q=0.6,de;q=0.4,en;q=0.2',
+		'User-Agent': 'Mozilla/5.0 (Windows; U; Windows NT 6.0; en-US; rv:1.9.2.16) Gecko/20110319 Firefox/3.6.16'
+	}
 
 	def run(self):
 		output_file_path = self.output().path
-		proxy_list_https = "http://www.xroxy.com/proxylist.php?port=&type=Anonymous&ssl=ssl&country=FR&latency=&reliability=#table"
-		proxy_list_http = "http://www.xroxy.com/proxylist.php?port=&type=Anonymous&ssl=nossl&country=FR&latency=&reliability=#table"
 		proxies = {}
 
-		http_proxy = self.get_proxy_ip(proxy_list_http)
-		https_proxy = self.get_proxy_ip(proxy_list_https)
+		http_proxy = self.get_proxy_ip(protocol="http")
+		https_proxy = self.get_proxy_ip(protocol="https")
 
 		if http_proxy and https_proxy:
 			proxies = {
@@ -49,28 +47,20 @@ class ProxyTask(BaseTask):
 		output = self.create_output_path(job_output)
 		return luigi.LocalTarget(output)
 
-	def get_proxy_ip(self, url):
-		start_url = url
-		retry_count = 0
-		while url and retry_count < 5:
-			try:
-				self.logger.info("Requesting proxy list url:\t%s", url)
-				table_row_selector = "#content table[align='center'][cellspacing='1'][cellpadding='3'] tr"
-				response = requests.get(url, headers=self.headers, timeout=1, verify=False)
-				doc = pq(response.text)
-				for row in doc(table_row_selector):
-					proxy_ip = pq(row).find('a[title="View this Proxy details"]').text()
-					proxy_port = pq(row).find("a[title^='Select proxies with port number']").text().strip()
-					proxy_address = "{}:{}".format(proxy_ip, proxy_port)
-					if proxy_ip and self.valid_proxy(proxy_address):
-						return proxy_address
-
-				current_page_link = doc("table[border='0'] a:has('b')")[-1]
-				next_page_link = pq(current_page_link).next().attr("href")
-				url = urljoin(start_url, next_page_link)
-			except Exception as e:
-				self.logger.error(str(e))
-				retry_count += 1
+	def get_proxy_ip(self, protocol):
+		query_file_path = self.config_parser.get("jobs", "GetProxySql")
+		with open(query_file_path) as query_file:
+			query = query_file.read()
+			
+		self.get_connection()
+		self.cursor.execute(query)
+		for row in self.cursor:
+			data = dict(row)
+			if protocol == data["protocol"]:
+				proxy_address = data["ip"] + ":" + str(data["port"])
+				if self.valid_proxy(proxy_address):
+					self.connection.close()
+					return proxy_address
 
 	def valid_proxy(self, proxy_address):
 		self.logger.info("Testing proxy:\t%s", proxy_address)

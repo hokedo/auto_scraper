@@ -36,13 +36,16 @@ GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.advert TO rw_user;
 CREATE TABLE crawl.proxy (id SERIAL, ip varchar, port int, protocol varchar, available boolean default true);
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE crawl.proxy TO rw_user;
 
-INSERT INTO crawl.proxy (ip, port, protocol) SELECT '193.189.225.106', 80, 'http';
-INSERT INTO crawl.proxy (ip, port, protocol) SELECT '31.3.145.189', 80, 'http';
-INSERT INTO crawl.proxy (ip, port, protocol) SELECT '149.202.217.218', 80, 'http';
-INSERT INTO crawl.proxy (ip, port, protocol) SELECT '188.195.242.239', 80, 'http';
-INSERT INTO crawl.proxy (ip, port, protocol) SELECT '83.169.17.225', 80, 'http';
-INSERT INTO crawl.proxy (ip, port, protocol) SELECT '138.201.63.123', 31288, 'https';
-INSERT INTO crawl.proxy (ip, port, protocol) SELECT '46.235.155.156', 8080, 'https';
-INSERT INTO crawl.proxy (ip, port, protocol) SELECT '89.163.246.150', 8080, 'https';
+INSERT INTO crawl.proxy (ip, port, protocol) SELECT '85.204.229.47', 81, 'http';
+INSERT INTO crawl.proxy (ip, port, protocol) SELECT '85.204.229.47', 81, 'https';
+
+INSERT INTO crawl.proxy (ip, port, protocol) SELECT '86.107.110.218', 80, 'http';
+INSERT INTO crawl.proxy (ip, port, protocol) SELECT '86.107.110.218', 80, 'https';
+
+INSERT INTO crawl.proxy (ip, port, protocol) SELECT '91.194.42.51', 80, 'http';
+INSERT INTO crawl.proxy (ip, port, protocol) SELECT '91.194.42.51', 80, 'https';
+
+INSERT INTO crawl.proxy (ip, port, protocol) SELECT '188.213.175.227', 80, 'http';
+INSERT INTO crawl.proxy (ip, port, protocol) SELECT '188.213.175.227', 80, 'https';
 
 ALTER DATABASE auto_scraper SET datestyle TO "dmy";

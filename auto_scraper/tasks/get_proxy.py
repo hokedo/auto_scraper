@@ -40,7 +40,9 @@ class ProxyTask(BasePsqlTask):
 			with open(output_file_path, "w") as output_file:
 				output_file.write(json.dumps(proxies))
 		else:
-			raise Exception("No proxies found")
+			message = "No proxies found"
+			self.slack_hook(message)
+			raise Exception(message)
 
 	def output(self):
 		job_output = self.config_parser.get("jobs", "ProxyTaskOutput")

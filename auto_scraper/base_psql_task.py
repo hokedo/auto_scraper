@@ -30,14 +30,18 @@ class BasePsqlTask(BaseTask):
 		Create a db connection. If connection is successful,
 		it is saved inside the object alongside with the cursor.
 		"""
-		self.connection = psycopg2.connect(
-										dbname=self.database,
-										user=self.username,
-										password=self.password,
-										host=self.host,
-										port=self.port
-										)
-		self.cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+		try:
+			self.connection = psycopg2.connect(
+											dbname=self.database,
+											user=self.username,
+											password=self.password,
+											host=self.host,
+											port=self.port
+											)
+			self.cursor = self.connection.cursor(cursor_factory=psycopg2.extras.DictCursor)
+		except Exception as e:
+			self.slack_hook(str(e))
+			raise
 
 	def pgpass(self):
 		"""

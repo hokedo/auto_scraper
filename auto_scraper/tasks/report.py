@@ -23,7 +23,6 @@ class ReportTask(BaseTask):
 		input_file = self.requires().output().path
 		output_file = self.output().path
 		inserted_data_file = UpdateDBTask().output().path
-		slack_hook_path = os.path.expanduser('~/.slack_hook')
 
 		with open(input_file) as input:
 			report_data = {}
@@ -44,20 +43,10 @@ class ReportTask(BaseTask):
 			with open(output_file, "w") as output:
 				output.write(json.dumps(report_data))
 
-		if os.path.isfile(slack_hook_path):
-			# **optional**
-			# Send yourself a message to slack 
-			# containing the report data
-			import requests
-			with open(slack_hook_path) as slack_hook_file:
-				slack_hook = slack_hook_file.read().strip()
-
-			requests.post(
-							slack_hook,
-							json={
-	            				"text": "Auto Scraper Report: {}".format(report_data),
-	    					}
-	    				)
+		# **optional**
+		# Send yourself a message to slack
+		# containing the report data
+		self.slack_hook(report_data)
 
 	def output(self):
 		job_output = self.config_parser.get("jobs", "ReportTaskOutput")

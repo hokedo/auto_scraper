@@ -70,8 +70,9 @@ class UpdateDBTask(BasePsqlTask):
 							self.cursor.execute(reset_query.format(data["url"]))
 
 						except (ProgrammingError, InternalError, DataError) as e:
+							self.connection.rollback()
 							self.logger.error(str(e))
-							self.logger.error(json.dumps(data["data"]))
+							self.logger.error("URL:\t%s", data["data"]["url"])
 							continue
 
 						self.connection.commit()

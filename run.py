@@ -16,6 +16,7 @@ from auto_scraper.tasks.delete_data import DeleteOldDataTask
 from auto_scraper.tasks.report import ReportTask
 from auto_scraper.tasks.clean import CleanUpTask
 from auto_scraper.tasks.geocode import GeocodeTask
+from auto_scraper.tasks.populate_poi import PopulatePOITask
 
 logging.config.fileConfig('config/logging.cfg')
 logger = logging.getLogger()
@@ -32,6 +33,12 @@ def get_args():
 		help="Name of the configuration file located in the 'config' folder",
 		default="main"
 		)
+	argp.add_argument(
+		"--poi",
+		help="Run just the Points of interest populating Task",
+		action="store_true",
+		default=False
+	)
 
 	args = vars(argp.parse_args())
 	return args
@@ -79,14 +86,18 @@ if __name__ == "__main__":
 	run_output = os.path.join(output_folder, current_date)
 	os.makedirs(run_output)
 
-	tasks = [
-		ProxyTask(),
-		StartUrlTask(),
-		CrawlTask(),
-		UpdateDBTask(),
-		DeleteOldDataTask(),
-		ReportTask(),
-		CleanUpTask(),
-		GeocodeTask()
-	]
+	if args.get("poi"):
+		tasks = [PopulatePOITask()]
+	else:
+		tasks = [
+			ProxyTask(),
+			StartUrlTask(),
+			CrawlTask(),
+			UpdateDBTask(),
+			DeleteOldDataTask(),
+			ReportTask(),
+			CleanUpTask(),
+			GeocodeTask()
+		]
+
 	luigi.interface.build(tasks, local_scheduler=True)

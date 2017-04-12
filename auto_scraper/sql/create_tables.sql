@@ -60,3 +60,15 @@ CREATE TABLE data.geocoded
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.geocoded TO rw_user;
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA data TO rw_user;
+
+CREATE TABLE data.poi
+(
+	id SERIAL,
+	name character varying,
+	address character varying,
+	latitude float,
+	longitude float,
+	rating float,
+	type character varying
+);
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.poi TO rw_user;

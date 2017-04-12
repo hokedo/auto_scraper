@@ -64,7 +64,7 @@ class PopulatePOITask(BasePsqlTask):
 				results.append({
 					"name": result["name"],
 					"address": result["formatted_address"],
-					"rating": result["rating"],
+					"rating": result.get("rating", 0),
 					"type": type,
 					"latitude": result["geometry"]["location"]["lat"],
 					"longitude": result["geometry"]["location"]["lng"],

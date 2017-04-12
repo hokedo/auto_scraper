@@ -56,7 +56,7 @@ class PopulatePOITask(BasePsqlTask):
 
 	def get_poi_data(self, start_url, type):
 		results = []
-		url =  start_url
+		url = start_url
 		while url:
 			self.logger.info("Requesting:\t%s", url)
 			response = requests.get(url)

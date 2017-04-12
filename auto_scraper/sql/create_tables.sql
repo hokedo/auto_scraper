@@ -59,7 +59,6 @@ CREATE TABLE data.geocoded
 	CONSTRAINT geocodet_pkey PRIMARY KEY (address)
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.geocoded TO rw_user;
-GRANT USAGE ON ALL SEQUENCES IN SCHEMA data TO rw_user;
 
 CREATE TABLE data.poi
 (
@@ -72,3 +71,5 @@ CREATE TABLE data.poi
 	type character varying
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.poi TO rw_user;
+
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA data TO rw_user;

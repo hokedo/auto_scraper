@@ -1,0 +1,2 @@
+INSERT INTO data.geocoded (address, latitute, longitude)
+	VALUES ('{address}', {latitude}, {longitude})

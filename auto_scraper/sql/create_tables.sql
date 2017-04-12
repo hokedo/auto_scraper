@@ -49,3 +49,13 @@ INSERT INTO crawl.proxy (ip, port, protocol) SELECT '188.213.175.227', 80, 'http
 INSERT INTO crawl.proxy (ip, port, protocol) SELECT '188.213.175.227', 80, 'https';
 
 ALTER DATABASE auto_scraper SET datestyle TO "dmy";
+
+CREATE TABLE data.geocoded
+(
+	id SERIAL,
+	address character varying NOT NULL,
+	latitude float NOT NULL,
+	longitude float NOT NULL,
+	CONSTRAINT geocodet_pkey PRIMARY KEY (address)
+);
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.geocoded TO rw_user;

@@ -35,6 +35,7 @@ class GeocodeTask(BasePsqlTask):
 		for row in self.cursor.fetchall():
 			row = dict(row)
 			address = quote_plus(row["address"])
+			self.logger.info("Requesting for address:\t%s", address)
 			response = requests.get(api_url.format(
 				quoted_address=address,
 				key=api_key)
@@ -45,7 +46,7 @@ class GeocodeTask(BasePsqlTask):
 			longitude = data.get("geometry", {}).get("location", {}).get("lng")
 			insert_data = {
 				"address": row["address"],
-				"longitute": longitude,
+				"longitude": longitude,
 				"latitude": latitude
 			}
 			inserts.append(insert_data)

@@ -1,2 +1,2 @@
 INSERT INTO data.poi (name, address, latitude, longitude, rating, type)
-VALUES ('{name}', '{address}', {latitude}, {longitude}, {rating}, '{type}')
+VALUES (%s, %s, %s, %s, %s, %s)

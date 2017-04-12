@@ -34,16 +34,17 @@ class PopulatePOITask(BasePsqlTask):
 		with open(output_file_path, "w") as output:
 			for insert_data in inserts:
 				output.write(json.dumps(insert_data) + "\n")
-				query = insert_poi_query.format(
-					name=insert_data["name"],
-					address=insert_data["address"],
-					rating=insert_data["rating"],
-					type=insert_data["type"],
-					latitude=insert_data["latitude"],
-					longitude=insert_data["longitude"],
+				parameters = (
+					insert_data["name"],
+					insert_data["address"],
+					insert_data["latitude"],
+					insert_data["longitude"],
+					insert_data["rating"],
+					insert_data["type"],
 				)
-				self.cursor.execute(query)
+				self.cursor.execute(insert_poi_query, parameters)
 				self.connection.commit()
+
 
 		self.cursor.close()
 		self.connection.close()

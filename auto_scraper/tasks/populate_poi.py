@@ -69,8 +69,8 @@ class PopulatePOITask(BasePsqlTask):
 					"latitude": result["geometry"]["location"]["lat"],
 					"longitude": result["geometry"]["location"]["lng"],
 				})
-			if result.get("next_page_token"):
-				url = re.sub(r"&pagetoken=.*", "&pagetoken="+result["next_page_token"], url)
+			if data.get("next_page_token"):
+				url = re.sub(r"&pagetoken=.*", "&pagetoken="+data["next_page_token"], url)
 			else:
 				url = None
 		return results

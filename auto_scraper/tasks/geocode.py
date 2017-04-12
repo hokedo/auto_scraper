@@ -17,7 +17,7 @@ class GeocodeTask(BasePsqlTask):
 	def run(self):
 		output_file_path = self.output().path
 		get_address_query_path = self.config_parser.get("jobs", "GetAddressesSql")
-		insert_coord_query_path = self.config_parser.get("jobs", "InsertCoordSql")
+		insert_coord_query_path = self.config_parser.get("jobs", "InsertCoordSqlTemplate")
 		api_key = self.config_parser.get("api_keys", "maps_api")
 		api_url = self.config_parser.get("jobs", "GoogleMapsApi")
 		inserts = []

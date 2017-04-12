@@ -81,10 +81,11 @@ if __name__ == "__main__":
 	if not os.path.isdir(output_folder):
 		os.makedirs(output_folder)
 
-	# Create folder for the current run.
+	# Create folder for the current run if it doesn't exist
 	current_date = config.get("task_params", "date")
 	run_output = os.path.join(output_folder, current_date)
-	os.makedirs(run_output)
+	if not os.path.isdir(run_output):
+		os.makedirs(run_output)
 
 	if args.get("poi"):
 		tasks = [PopulatePOITask()]

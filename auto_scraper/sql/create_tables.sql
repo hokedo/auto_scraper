@@ -56,7 +56,7 @@ CREATE TABLE data.geocoded
 	address character varying NOT NULL,
 	latitude float NOT NULL,
 	longitude float NOT NULL,
-	CONSTRAINT geocodet_pkey PRIMARY KEY (address)
+	CONSTRAINT geocoded_pkey PRIMARY KEY (address)
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.geocoded TO rw_user;
 
@@ -71,5 +71,15 @@ CREATE TABLE data.poi
 	type character varying
 );
 GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.poi TO rw_user;
+
+CREATE TABLE data.poi_distance
+(
+	id SERIAL,
+	poi_id integer,
+	address_id integer,
+	distance float,
+	instructions varchar
+);
+GRANT SELECT, UPDATE, INSERT, DELETE ON TABLE data.poi_distance TO rw_user;
 
 GRANT USAGE ON ALL SEQUENCES IN SCHEMA data TO rw_user;

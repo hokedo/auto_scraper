@@ -9,6 +9,7 @@ tables:
 		echo "Create a database user with create and grant permissions before executing this script"
 		echo "The username should be the same as the current user"
 		psql auto_scraper -h localhost -f ./auto_scraper/sql/create_tables.sql
+		psql auto_scraper -h localhost -f ./auto_scraper/sql/poi_dist_func.sql
 		echo "Make sure to set password to rw_user!"
 
 venv:

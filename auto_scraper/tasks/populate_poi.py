@@ -11,9 +11,13 @@ class PopulatePOITask(BasePsqlTask):
 		api_key = self.config_parser.get("api_keys", "places_api")
 		api_url = self.config_parser.get("jobs", "GooglePlacesApi")
 		insert_poi_query_path = self.config_parser.get("jobs", "InsertPOISqlTemplate")
+		calculate_poi_distance_query_path = self.config_parser.get("jobs", "POIDistanceSQL")
 
 		with open(insert_poi_query_path) as insert_poi_query_file:
 			insert_poi_query = insert_poi_query_file.read().strip()
+
+		with open(calculate_poi_distance_query_path) as calculate_poi_distance_query_file:
+			calculate_poi_distance_query = calculate_poi_distance_query_file.read().strip()
 
 		# TODO: remove hardcoding
 		interesting_cities = ["Cluj"]
@@ -45,7 +49,9 @@ class PopulatePOITask(BasePsqlTask):
 				self.cursor.execute(insert_poi_query, parameters)
 				self.connection.commit()
 
-
+		self.cursor.execute(calculate_poi_distance_query)
+		self.connection.commit()
+		
 		self.cursor.close()
 		self.connection.close()
 

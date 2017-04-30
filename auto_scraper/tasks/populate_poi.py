@@ -51,7 +51,7 @@ class PopulatePOITask(BasePsqlTask):
 
 		self.cursor.execute(calculate_poi_distance_query)
 		self.connection.commit()
-		
+
 		self.cursor.close()
 		self.connection.close()
 

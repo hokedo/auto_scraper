@@ -18,6 +18,7 @@ class GeocodeTask(BasePsqlTask):
 		output_file_path = self.output().path
 		get_address_query_path = self.config_parser.get("jobs", "GetAddressesSql")
 		insert_coord_query_path = self.config_parser.get("jobs", "InsertCoordSqlTemplate")
+		calculate_poi_distance_query_path = self.config_parser.get("jobs", "POIDistanceSQL")
 		api_key = self.config_parser.get("api_keys", "maps_api")
 		api_url = self.config_parser.get("jobs", "GoogleMapsApi")
 		inserts = []
@@ -28,9 +29,17 @@ class GeocodeTask(BasePsqlTask):
 		with open(insert_coord_query_path) as insert_coord_query_file:
 			insert_coord_query = insert_coord_query_file.read().strip()
 
-		self.get_connection()
-		self.cursor.execute(get_address_query)
+		with open(calculate_poi_distance_query_path) as calculate_poi_distance_query_file:
+			calculate_poi_distance_query = calculate_poi_distance_query_file.read().strip()
 
+		self.get_connection()
+
+		self.logger.info("Calculating POI distances")
+		self.cursor.execute(calculate_poi_distance_query)
+		self.connection.commit()
+		self.logger.info("Finished calculating POI distances")
+
+		self.cursor.execute(get_address_query)
 
 		for row in self.cursor.fetchall():
 			row = dict(row)
@@ -53,6 +62,9 @@ class GeocodeTask(BasePsqlTask):
 				inserts.append(insert_data)
 			else:
 				self.logger.warning("Skipped address: %s", row["address"])
+
+		self.cursor.execute(calculate_poi_distance_query)
+		self.connection.commit()
 
 		with open(output_file_path, "w") as output:
 			for insert_data in inserts:

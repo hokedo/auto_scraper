@@ -51,13 +51,10 @@ class UpdateDBTask(BasePsqlTask):
 						data["data"]["url"] = data["url"]
 						data["data"]["domain"] = data["domain"]
 						to_insert = self.key_value_split(data["data"])
-
-						# Not really happy with this part
-						keys = self.sql_stringify_array(to_insert["keys"]).replace("u'", "").replace("'", "")
-						values = self.sql_stringify_array(to_insert["values"]).replace("u'", "'")
+						query = self.prep_query(insert_query, to_insert["keys"], to_insert["values"])
 
 						try:
-							self.cursor.execute(insert_query.format(keys=keys, values=values))
+							self.cursor.execute(query, to_insert["values"])
 							output_file.write("{}\t{}\n".format(data["url"], data["domain"]))
 
 						except IntegrityError as e:
@@ -72,7 +69,7 @@ class UpdateDBTask(BasePsqlTask):
 
 						except (ProgrammingError, InternalError, DataError) as e:
 							self.connection.rollback()
-							self.logger.error(str(e))
+							self.logger.error(str(e).strip())
 							self.logger.error("URL:\t%s", data["data"]["url"])
 							continue
 
@@ -87,13 +84,19 @@ class UpdateDBTask(BasePsqlTask):
 		return luigi.LocalTarget(output_file)
 
 	def key_value_split(self, dictionary):
-		output_file = {"keys": [], "values": []}
+		output = {"keys": [], "values": []}
 
 		for key, value in dictionary.iteritems():
-			output_file["keys"].append(key)
-			output_file["values"].append(value)
+			output["keys"].append(key)
+			output["values"].append(value)
 
-		return output_file
+		return output
+
+	def prep_query(self, query, keys, values):
+		keys = ",".join(keys)
+		values = ",".join(['%s'] * len(values))
+		query = query.format(keys="%s", values="{values}") % keys
+		return query.format(values=values)
 
 	def sql_stringify_array(self, array):
 		return repr(array).replace("]", "").replace("[", "")

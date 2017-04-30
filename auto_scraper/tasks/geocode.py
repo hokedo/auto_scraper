@@ -41,15 +41,18 @@ class GeocodeTask(BasePsqlTask):
 				key=api_key)
 			)
 			data = json.loads(response.text)
-			data = data.get("results", [{}])[0]
-			latitude = data.get("geometry", {}).get("location", {}).get("lat")
-			longitude = data.get("geometry", {}).get("location", {}).get("lng")
-			insert_data = {
-				"address": row["address"],
-				"longitude": longitude,
-				"latitude": latitude
-			}
-			inserts.append(insert_data)
+			if data.get("results") and len(data["results"]):
+				data = data.get("results")[0]
+				latitude = data.get("geometry", {}).get("location", {}).get("lat")
+				longitude = data.get("geometry", {}).get("location", {}).get("lng")
+				insert_data = {
+					"address": row["address"],
+					"longitude": longitude,
+					"latitude": latitude
+				}
+				inserts.append(insert_data)
+			else:
+				self.logger.warning("Skipped address: %s", address)
 
 		with open(output_file_path, "w") as output:
 			for insert_data in inserts:

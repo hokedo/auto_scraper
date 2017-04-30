@@ -33,6 +33,7 @@ class UpdateDBTask(BasePsqlTask):
 		sql_file_path = self.config_parser.get("jobs", "SetDeleteFlagSql")
 		with open(sql_file_path) as sql_file:
 			self.cursor.execute(sql_file.read())
+			self.connection.commit()
 
 		sql_file_path = self.config_parser.get("jobs", "ResetFlagTemplate")
 		with open(sql_file_path) as sql_file:

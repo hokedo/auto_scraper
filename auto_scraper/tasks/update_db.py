@@ -60,7 +60,7 @@ class UpdateDBTask(BasePsqlTask):
 						except IntegrityError as e:
 							# Exception thrown in case
 							# constraints are violated
-							self.logger.warn(str(e))
+							self.logger.warn(str(e).strip())
 							self.connection.rollback()
 							# Key (url) already exists
 							# Reset the flag so that this 

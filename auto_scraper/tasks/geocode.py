@@ -52,7 +52,7 @@ class GeocodeTask(BasePsqlTask):
 				}
 				inserts.append(insert_data)
 			else:
-				self.logger.warning("Skipped address: %s", address)
+				self.logger.warning("Skipped address: %s", row["address"])
 
 		with open(output_file_path, "w") as output:
 			for insert_data in inserts:
